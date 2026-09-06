@@ -28,6 +28,7 @@
 
 /datum/full_round_event/hypothermia
 	name = "Hypothermia"
+	hub_name = "thermal deprivation"
 	short_desc = "You and your crew have crashed on this frozen planet. \
 				You're cut off from communication and left to your own devices. \
 				But that's not your biggest problem. Beware the freezing cold and the locals."

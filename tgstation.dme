@@ -9024,7 +9024,8 @@
 #include "modular_skyrat\modules\synths\code\surgery\operations\operation_organ_repair.dm"
 #include "modular_skyrat\modules\synths\code\surgery\operations\operation_revival.dm"
 #include "modular_skyrat\modules\synths\code\surgery\operations\operation_subsystem_upgrades.dm"
-#include "modular_skyrat\modules\tagline\code\world.dm"
+// FENYSHA EDIT - superseded by fenysha_events\code\modules\hub\hub_status.dm
+// #include "modular_skyrat\modules\tagline\code\world.dm"
 #include "modular_skyrat\modules\tarkon\code\clothing\head.dm"
 #include "modular_skyrat\modules\tarkon\code\clothing\mod.dm"
 #include "modular_skyrat\modules\tarkon\code\clothing\neck.dm"

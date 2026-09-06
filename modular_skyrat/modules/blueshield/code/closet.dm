@@ -31,8 +31,10 @@
 	icon = 'modular_skyrat/master_files/icons/obj/closet.dmi'
 	req_access = list(ACCESS_CAPTAIN)
 
-/obj/structure/closet/secure_closet/blueshield/New()
-	..()
+// FENYSHA EDIT CHANGE BEGIN - was New(), which leaves contents uninitialized on template loads
+// ORIGINAL: /obj/structure/closet/secure_closet/blueshield/New()
+/obj/structure/closet/secure_closet/blueshield/PopulateContents()
+	. = ..()
 	new /obj/item/storage/briefcase/secure(src)
 	new /obj/item/storage/belt/security/full(src)
 	new /obj/item/grenade/flashbang(src)
@@ -44,4 +46,5 @@
 	new /obj/item/storage/bag/garment/blueshield(src)
 //	new /obj/item/mod/control/pre_equipped/blueshield(src)
 	new /obj/item/storage/box/glasseskit(src)
+// FENYSHA EDIT CHANGE END
 //	new /obj/item/storage/medkit/brute(src)

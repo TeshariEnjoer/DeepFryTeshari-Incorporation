@@ -82,6 +82,7 @@
 #include "code\modules\gmod\tools\_phystool.dm"
 #include "code\modules\horror_effects\global_looping_sound.dm"
 #include "code\modules\horror_effects\patches.dm"
+#include "code\modules\hub\hub_status.dm"
 #include "code\modules\hypothermia\component.dm"
 #include "code\modules\hypothermia\hypothermia.dm"
 #include "code\modules\hypothermia\seethrough.dm"
