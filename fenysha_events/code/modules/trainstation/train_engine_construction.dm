@@ -129,6 +129,8 @@
 /// The core this part belongs to, whether or not it is currently linked. Falls back to a scan so a
 /// part that was just built - and so has never been linked by anything - can still find its core.
 /obj/machinery/power/train_turbine/proc/find_rotor()
+	RETURN_TYPE(/obj/machinery/power/train_turbine/core_rotor)
+
 	var/obj/machinery/power/train_turbine/core_rotor/found = rotor
 	if(!QDELETED(found))
 		return found

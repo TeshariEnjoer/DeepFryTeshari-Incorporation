@@ -20,8 +20,11 @@
 
 	/// Power consumed while the train is moving.
 	var/moving_power_usage = 60 KILO WATTS
-	base_pixel_x = -48
-	pixel_x = -48
+	base_pixel_x = -32
+	pixel_x = -32
+	base_pixel_y = -32
+	pixel_y = -32
+
 
 /obj/machinery/train_engine/Initialize(mapload)
 	. = ..()
