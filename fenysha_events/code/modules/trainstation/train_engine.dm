@@ -3,10 +3,9 @@
 	desc = "Train's main propulsion system, which is essential for its movement and operation. \
 			It requires a constant supply of power to propel the train."
 
-	/*
-	icon = 'fenysha_events/icons/machinery/train.dmi'
+
+	icon = 'fenysha_events/icons/machinery/96x96.dmi'
 	icon_state = "train_engine"
-	*/
 
 	density = TRUE
 	opacity = FALSE
@@ -20,8 +19,9 @@
 	critical_machine = TRUE
 
 	/// Power consumed while the train is moving.
-	var/moving_power_usage = 60 MEGA WATTS
-
+	var/moving_power_usage = 60 KILO WATTS
+	base_pixel_x = -48
+	pixel_x = -48
 
 /obj/machinery/train_engine/Initialize(mapload)
 	. = ..()
