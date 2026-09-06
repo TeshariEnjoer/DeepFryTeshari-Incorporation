@@ -1,3 +1,74 @@
+/obj/machinery/train_engine
+	name = "Train Engine"
+	desc = "Train's main propulsion system, which is essential for its movement and operation. \
+			It requires a constant supply of power to propel the train."
+
+	/*
+	icon = 'fenysha_events/icons/machinery/train.dmi'
+	icon_state = "train_engine"
+	*/
+
+	density = TRUE
+	opacity = FALSE
+
+	resistance_flags = INDESTRUCTIBLE | LAVA_PROOF | FIRE_PROOF | UNACIDABLE | ACID_PROOF | FREEZE_PROOF
+	flags_1 = SUPERMATTER_IGNORES_1
+
+	processing_flags = START_PROCESSING_MANUALLY
+
+	idle_power_usage = 1 KILO WATTS
+	critical_machine = TRUE
+
+	/// Power consumed while the train is moving.
+	var/moving_power_usage = 60 MEGA WATTS
+
+
+/obj/machinery/train_engine/Initialize(mapload)
+	. = ..()
+	// Claim the engine slot only if it is free, so building a second rotor cannot steal the train's
+	// drive away from the working one.
+	if(QDELETED(SStrain_controller.train_engine))
+		SStrain_controller.train_engine = src
+	SSpoints_of_interest.make_point_of_interest(src)
+	begin_processing()
+
+
+/obj/machinery/train_engine/Destroy(force)
+	end_processing()
+	// Release before the parent runs, and only if we are the engine - otherwise scrapping a spare
+	// rotor unsets the live one and the train refuses to move.
+	if(SStrain_controller.train_engine == src)
+		SStrain_controller.train_engine = null
+
+	return ..()
+
+
+/obj/machinery/train_engine/examine(mob/user)
+	. = ..()
+
+	if(SStrain_controller.is_moving())
+		. += span_warning("The engine is currently operating at full capacity.")
+		. += span_notice("Current power consumption: [active_power_usage] watts.")
+	else
+		. += span_notice("The engine is idle. The train is currently stationary.")
+
+
+/obj/machinery/train_engine/process()
+	if(!SStrain_controller.is_moving())
+		return
+
+	if(!powered() || !use_energy(moving_power_usage))
+		balloon_alert_to_viewers("Insufficient power - train engine shutting down!")
+
+		// The engine itself doesn't control the train.
+		// Train movement should be stopped by the train controller
+		// when it detects insufficient power.
+		SStrain_controller.stop_moving()
+
+		return
+
+
+
 /// Minimum pressure of gases passing through the turbine
 #define MINIMUM_TURBINE_PRESSURE 0.01
 /// Returns the maximum pressure if it is below the value
@@ -202,18 +273,10 @@
 	. = ..()
 	if(mapload)
 		new /obj/item/paper/guides/jobs/atmos/train_turbine(loc)
-	// Claim the engine slot only if it is free, so building a second rotor cannot steal the train's
-	// drive away from the working one.
-	if(QDELETED(SStrain_controller.train_engine))
-		SStrain_controller.train_engine = src
 	soundloop = new(src)
 	connect_to_network()
 
 /obj/machinery/power/train_turbine/core_rotor/Destroy()
-	// Release before the parent runs, and only if we are the engine - otherwise scrapping a spare
-	// rotor unsets the live one and the train refuses to move.
-	if(SStrain_controller.train_engine == src)
-		SStrain_controller.train_engine = null
 	// Clears compressor.rotor / turbine.rotor so surviving parts do not hold a deleted core. Must run
 	// before the soundloop goes, since end_processing() stops it.
 	deactivate_parts()

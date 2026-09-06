@@ -61,10 +61,10 @@
 	// Whether this station blocks the train's movement, will be set automatically if the station has the TRAINSTATION_BLOCKING flag
 	var/blocking_moving = FALSE
 
-	VAR_PRIVATE/datum/looping_sound/global_sound/station_loop_sound = null
-	VAR_PRIVATE/datum/map_template/template = null
+	VAR_FINAL/datum/looping_sound/global_sound/station_loop_sound = null
+	VAR_FINAL/datum/map_template/template = null
 	VAR_PRIVATE/list/docking_turfs = list()
-	VAR_PRIVATE/datum/train_station/near_station/loaded_nearstation = null
+	VAR_FINAL/datum/train_station/near_station/loaded_nearstation = null
 	VAR_PRIVATE/unlock_password
 
 

@@ -70,7 +70,7 @@ SUBSYSTEM_DEF(train_controller)
 	var/datum/moving_turf_transition/transition_theme = null
 
 	/// Reference to the train engine (turbine core)
-	var/obj/machinery/power/train_turbine/core_rotor/train_engine = null
+	var/obj/machinery/train_engine/train_engine = null
 	/// Flag: a station is currently being loaded or unloaded
 	var/loading = FALSE
 
@@ -442,8 +442,6 @@ SUBSYSTEM_DEF(train_controller)
 		return FALSE
 	if(!train_engine && !no_engine_mode)
 		return FALSE
-	if(!train_engine.is_active() && !no_engine_mode)
-		return FALSE
 	return TRUE
 
 /datum/controller/subsystem/train_controller/proc/pick_theme()
@@ -535,7 +533,7 @@ SUBSYSTEM_DEF(train_controller)
 	if(!moving)
 		return
 
-	if((!train_engine || !train_engine.is_active()) && !no_engine_mode)
+	if((!train_engine || !train_engine.is_operational) && !no_engine_mode)
 		stop_moving()
 		return
 
@@ -607,7 +605,7 @@ SUBSYSTEM_DEF(train_controller)
 	data["read_only"] = read_only
 	data["admin_mode"] = admin_mode
 	data["is_moving"] = is_moving()
-	data["train_engine_active"] = train_engine?.is_active() || FALSE
+	data["train_engine_active"] = train_engine?.is_operational || FALSE
 	data["current_station"] = loaded_station?.name || "Unknown"
 	data["planned_station"] = planned_to_load?.name || "Not selected"
 	data["is_blocked"] = loaded_station?.blocking_moving || FALSE
@@ -718,7 +716,7 @@ SUBSYSTEM_DEF(train_controller)
 				planned_to_load = next
 			return TRUE
 		if("start_moving")
-			if(!train_engine || !train_engine.is_active())
+			if(!train_engine || !train_engine.is_operational)
 				no_engine_mode = TRUE
 			start_moving(force = TRUE)
 			return TRUE

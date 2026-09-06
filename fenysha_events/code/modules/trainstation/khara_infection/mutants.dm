@@ -1,3 +1,5 @@
+#define KHARA_REGEN_FILTER "khara_healing_glow"
+
 /obj/effect/particle_effect/fluid/smoke/chem/khara
 	opacity = FALSE
 	alpha = 190
@@ -198,6 +200,14 @@
 	/// Additional melee damage modifier, where 1 means 2x damage
 	var/addictional_melee_damage_multiplier = 1
 
+	/// How this mob are protected against electrocute act. Since it's one of the weaknes of khara
+	var/shock_multiplier = 1
+	var/baton_stun_amount = 4 SECONDS
+
+	/// How long it takes before we can stun this mob by any possible way
+	var/shock_stun_cooldown = 3 SECONDS
+	var/baton_stun_cooldown = 5 SECONDS
+
 	/// Footstep sounds of this mob
 	var/footstep_sounds = list(
 		'fenysha_events/sounds/mobs/footsteps/dsnecro/lurker_footstep_1.ogg',
@@ -217,8 +227,15 @@
 	var/spread_miasma_amount = 12
 	var/spread_miasma_chance = 5
 	var/spreads_miasma = FALSE
+
+	/// Regeneration settings
 	var/regeneration_delay = 4 SECONDS
 	var/health_regen_per_second = 4
+	var/regen_outline_colour = COLOR_PINK
+	var/list/ignore_damage_types = list(STAMINA)
+	VAR_PRIVATE/regeneration_start_timer
+	var/is_regenerating = FALSE
+
 	/// This mutant's abilities
 	var/list/innate_actions
 	/// The default abilities of all mutants
@@ -226,9 +243,12 @@
 		/datum/action/cooldown/mob_cooldown/consume = BB_MOB_ABILITY_CONSUME
 	)
 
-	var/apply_filter = TRUE
+	var/apply_filter = FALSE
 	var/spread_minimal_cooldown = 5 SECONDS
+
 	COOLDOWN_DECLARE(spread_cd)
+	COOLDOWN_DECLARE(shock_stun_cd)
+	COOLDOWN_DECLARE(baton_stun_cd)
 
 /mob/living/basic/khara_mutant/Initialize(mapload)
 	. = ..()
@@ -242,12 +262,6 @@
 		/datum/component/blood_walk,\
 		blood_type = /obj/effect/decal/cleanable/blood/bubblegum,\
 		blood_spawn_chance = 15,\
-	)
-	AddComponent(\
-		/datum/component/regenerator,\
-		regeneration_delay = regeneration_delay,\
-		brute_per_second = health_regen_per_second,\
-		outline_colour = COLOR_PINK,\
 	)
 	AddComponent(\
 		/datum/component/infection_attack, \
@@ -270,7 +284,75 @@
 
 	if(innate_actions && islist(innate_actions))
 		grant_actions_by_list(innate_actions)
+	subscribe_to_signals()
 	update_sight()
+
+/mob/living/basic/khara_mutant/Destroy()
+	stop_regenerating()
+	if(regeneration_start_timer)
+		deltimer(regeneration_start_timer)
+	unsubscribe_from_signals()
+	return ..()
+
+/mob/living/basic/khara_mutant/proc/subscribe_to_signals()
+	RegisterSignal(src, COMSIG_MOB_BATONED, PROC_REF(on_batoned))
+
+/mob/living/basic/khara_mutant/proc/unsubscribe_from_signals()
+	UnregisterSignal(src, list(COMSIG_MOB_BATONED))
+
+/mob/living/basic/khara_mutant/apply_damage(damage, damagetype, def_zone, blocked, forced, spread_damage, wound_bonus, exposed_wound_bonus, sharpness, attack_direction, attacking_item, wound_clothing)
+	. = ..()
+	if(. && !(damagetype in ignore_damage_types))
+		reset_regeneration_timer()
+
+/mob/living/basic/khara_mutant/proc/reset_regeneration_timer()
+	stop_regenerating()
+	regeneration_start_timer = addtimer(CALLBACK(src, PROC_REF(start_regenerating)), regeneration_delay, TIMER_UNIQUE|TIMER_OVERRIDE|TIMER_STOPPABLE)
+
+/mob/living/basic/khara_mutant/proc/should_regen()
+	if(stat == DEAD)
+		return FALSE
+	if(health >= maxHealth)
+		return FALSE
+	if(on_fire || !COOLDOWN_FINISHED(src, shock_stun_cd) || !COOLDOWN_FINISHED(src, baton_stun_cd))
+		return FALSE
+	return TRUE
+
+/mob/living/basic/khara_mutant/proc/start_regenerating()
+	if(!should_regen())
+		return
+	visible_message(span_notice("[src]'s wounds begin to knit closed!"))
+	is_regenerating = TRUE
+	regeneration_start_timer = null
+
+	if(!regen_outline_colour)
+		return
+	add_filter(KHARA_REGEN_FILTER, 2, list("type" = "outline", "color" = regen_outline_colour, "alpha" = 0, "size" = 1))
+	var/filter = get_filter(KHARA_REGEN_FILTER)
+	animate(filter, alpha = 200, time = 0.5 SECONDS, loop = -1)
+	animate(alpha = 0, time = 0.5 SECONDS)
+
+/mob/living/basic/khara_mutant/proc/stop_regenerating()
+	is_regenerating = FALSE
+	var/filter = get_filter(KHARA_REGEN_FILTER)
+	if(filter)
+		animate(filter)
+		remove_filter(KHARA_REGEN_FILTER)
+
+/mob/living/basic/khara_mutant/Life(seconds_per_tick, times_fired)
+	. = ..()
+	if(spreads_miasma && SPT_PROB(spread_miasma_chance, seconds_per_tick) && COOLDOWN_FINISHED(src, spread_cd))
+		COOLDOWN_START(src, spread_cd, spread_minimal_cooldown)
+		spread_miasma()
+
+	if(is_regenerating)
+		if(!should_regen())
+			stop_regenerating()
+			return
+
+		var/heal_mod = HAS_TRAIT(src, TRAIT_CRITICAL_CONDITION) ? 2 : 1
+		if(health_regen_per_second && adjust_brute_loss(-1 * heal_mod * health_regen_per_second * seconds_per_tick, updating_health = FALSE))
+			updatehealth()
 
 /mob/living/basic/khara_mutant/proc/give_powers()
 	PRIVATE_PROC(TRUE)
@@ -280,7 +362,6 @@
 		grant_actions_by_list(list(
 			/datum/action/cooldown/mob_cooldown/mech_crush = BB_MOB_ABILITY_CRUSH_MECH
 		))
-
 
 /mob/living/basic/khara_mutant/attack_hand(mob/living/carbon/human/user, list/modifiers)
 	return ATTACK_FAILED
@@ -307,17 +388,30 @@
 		attacking_item = attacking_item,
 	)
 
+/mob/living/basic/khara_mutant/electrocute_act(shock_damage, source, siemens_coeff, flags)
+	. = ..()
+	if(!COOLDOWN_FINISHED(src, shock_stun_cd))
+		return
+
+	var/stun_amount = abs(shock_damage >= 10 ? shock_damage * shock_multiplier : 0)
+	if(stun_amount)
+		Stun(stun_amount)
+		COOLDOWN_START(src, shock_stun_cd, shock_stun_cooldown)
+
+/mob/living/basic/khara_mutant/proc/on_batoned(mob/living/basic/khara_mutant/mutant, mob/living/user, obj/item/melee/baton/baton)
+	SIGNAL_HANDLER
+
+	if(!COOLDOWN_FINISHED(src, baton_stun_cd))
+		return
+
+	Stun(baton_stun_amount)
+	COOLDOWN_START(src, baton_stun_cd, baton_stun_cooldown)
+
 /mob/living/basic/khara_mutant/melee_attack(atom/target, list/modifiers, ignore_cooldown)
 	if(is_khara_creature(target))
 		to_chat(src, span_warning("You cannot attack your own kind!"))
 		return ATTACK_FAILED
 	. = ..()
-
-/mob/living/basic/khara_mutant/Life(seconds_per_tick, times_fired)
-	. = ..()
-	if(spreads_miasma && SPT_PROB(spread_miasma_chance, seconds_per_tick) && COOLDOWN_FINISHED(src, spread_cd))
-		COOLDOWN_START(src, spread_cd, spread_minimal_cooldown)
-		spread_miasma()
 
 /mob/living/basic/khara_mutant/say(message, bubble_type, list/spans, sanitize, datum/language/language, ignore_spam, forced, filterproof, message_range, datum/saymode/saymode, list/message_mods)
 	if(hivemind_link && client)
@@ -400,6 +494,12 @@
 	melee_damage_upper = 20
 	melee_damage_lower = 20
 	armour_penetration = 40
+
+	shock_multiplier = 1.5
+	baton_stun_amount = 3 SECONDS
+	baton_stun_cooldown = 3 SECONDS
+	shock_stun_cooldown = 2 SECONDS
+	regeneration_delay = 7 SECONDS
 
 	speed = 0
 	health = 150

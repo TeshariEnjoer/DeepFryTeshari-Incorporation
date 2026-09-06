@@ -420,7 +420,7 @@ MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/button/auto_detect, 24)
 	var/datum/controller/subsystem/train_controller/TC = SStrain_controller
 	switch(action)
 		if("start_moving")
-			if(!TC.train_engine.is_active())
+			if(!TC.train_engine.is_operational)
 				balloon_alert_to_viewers("Train engine not started!")
 				return TRUE
 			if(!COOLDOWN_FINISHED(src, toggle_moving_cd))
