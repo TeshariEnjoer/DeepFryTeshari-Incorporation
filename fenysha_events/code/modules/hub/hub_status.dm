@@ -5,7 +5,6 @@
 #define HUB_LEADER " <font color='#5c5c5c'>...</font> "
 
 /datum/config_entry/string/wiki_link
-	config_entry_value = "We forgot to set the server's wiki link in config.txt"
 
 /world/proc/update_status()
 
