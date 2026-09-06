@@ -161,7 +161,11 @@
 	var/obj/machinery/atmospherics/node = gas_connector.nodes[1]
 	if(node)
 		node.atmos_init()
-		node.add_member(gas_connector)
+		// add_member() would deref a null parent before SSair builds the pipeline
+		if(node.return_pipenet())
+			node.add_member(gas_connector)
+		else
+			SSair.add_to_rebuild_queue(node)
 		gas_connector.update_parents()
 	SSair.add_to_rebuild_queue(gas_connector)
 
@@ -705,6 +709,8 @@
 	circuit = /obj/item/circuitboard/machine/train_heater
 	can_atmos_pass = ATMOS_PASS_DENSITY
 	buffer = HEATER_WATER_VOLUME
+	// steam outlet is REVERSE_DIR(dir); NORTH puts it on the south face where the mapped pipes are
+	dir = NORTH
 
 	/// Whether the heater is active
 	var/active = FALSE

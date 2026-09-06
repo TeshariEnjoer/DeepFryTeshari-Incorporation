@@ -1,5 +1,7 @@
 /datum/full_round_event
 	var/name = "A global event"
+	/// Designation shown on the BYOND hub. Falls back to name.
+	var/hub_name
 	var/short_desc
 	var/extended_desc
 	var/round_start_massage
