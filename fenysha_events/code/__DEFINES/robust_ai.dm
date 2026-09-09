@@ -1,0 +1,64 @@
+#define BB_BASIC_MOB_LEADER "bb_mob_leader"
+#define BB_BASIC_MOB_LEADER_LAST_SEEN "bb_mob_leader_last_seen"
+#define BB_BASIC_MOB_LEADER_SEARCH_COOLDOWN "bb_mob_leader_search_cooldown"
+#define BB_BASIC_MOB_LEADER_HIDING_LOCATION "bb_mob_leader_hiding_location"
+#define BB_BASIC_MOB_SOCIAL_ALARM_TARGET "social_alarm_target"
+#define BB_BASIC_MOB_SOCIAL_ALARM_UNTIL "social_alarm_until"
+#define BB_BASIC_MOB_PULL_TARGET "basic_mob_pull_target"
+#define BB_BASIC_MOB_PATROL_POINT "basic_mob_patrol_point"
+#define BB_BASIC_MOB_MOVE_TARGET "basic_mob_move_target"
+#define BB_BASIC_MOB_PATROL_POINTS "basic_mob_patrol_points"
+#define BB_BASIC_MOB_PATROL_INDEX "basic_mob_patrol_index"
+
+#define BB_BASIC_MOB_PATROL_ANCHOR "basic_mob_patrol_anchor"
+#define BB_BASIC_MOB_CAN_USE_PATROL_POINTS "!can_use_patrol_points"
+#define BB_BASIC_MOB_SPAWN_POINT "basic_mob_spawn_point"
+
+#define BB_BASIC_MOB_ABILITY_KNOCKDOWN "bb_mob_ability_knockdown"
+#define BB_BASIC_MOB_ABILITY_THROW_GRENADE "bb_mob_ability_throw_greande"
+#define BB_BASIC_MOB_ABILITY_HEAL_TARGET "bb_mob_ability_heal"
+#define BB_BASIC_MOB_ABILITY_RESTRAIN_TARGET "bb_mob_ability_restrain_target"
+
+GLOBAL_LIST_EMPTY(ai_patrol_routes)
+
+
+/proc/get_ai_patrol_route(route_id)
+
+	if(isnull(route_id))
+		return
+
+	return GLOB.ai_patrol_routes[route_id]
+
+
+/proc/register_ai_patrol_point(
+	route_id,
+	point_index,
+	turf/location
+)
+
+	if(isnull(route_id) || !location)
+		return
+
+	var/list/route = GLOB.ai_patrol_routes[route_id]
+
+	if(!route)
+		route = list()
+		GLOB.ai_patrol_routes[route_id] = route
+
+	if(route[point_index] && route[point_index] != location)
+		stack_trace("Duplicate AI patrol point: route '[route_id]', index [point_index]")
+
+	route[point_index] = location
+
+/proc/unregister_ai_patrol_point(route_id, point_index, turf/location)
+
+	var/list/route = GLOB.ai_patrol_routes[route_id]
+
+	if(!route)
+		return
+
+	if(route[point_index] == location)
+		route -= point_index
+
+	if(!length(route))
+		GLOB.ai_patrol_routes -= route_id

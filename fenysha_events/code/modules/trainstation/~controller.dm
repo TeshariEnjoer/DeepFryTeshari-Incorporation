@@ -1330,7 +1330,6 @@ ADMIN_VERB(open_train_controller, R_ADMIN, "Open train controller", "Open active
 	parent.screen -= src
 	qdel(src)
 
-
 /atom/movable/screen/trainstation_icon
 	name = "Trainstation"
 	icon = 'fenysha_events/icons/hud/logos.dmi'
@@ -1462,49 +1461,88 @@ ADMIN_VERB(open_train_controller, R_ADMIN, "Open train controller", "Open active
 	var/last_phrase_change = 0
 
 	var/update_interval = 1 SECONDS
+
 	var/atom/movable/screen/text/load_phrases
+	var/atom/movable/screen/text/station_description
 	var/atom/movable/screen/trainstation_icon/animated/logo
 	var/datum/hud/owner_hud
 
+
 /atom/movable/screen/fullscreen/flash/black/station_loading/proc/apply_to(mob/living)
-	load_phrases = new(src)
-	logo = new(src)
+	if(!living?.hud_used)
+		return
 
 	owner_hud = living.hud_used
-	owner_hud.screen_groups[HUD_GROUP_STATIC] += load_phrases
-	owner_hud.screen_groups[HUD_GROUP_STATIC] += logo
-	owner_hud.hud_version = HUD_STYLE_NOHUD
-	owner_hud.show_hud(owner_hud.hud_version)
 
-	var/icon_size = world.icon_size
-
-	load_phrases.maptext_height = icon_size * 6
-	load_phrases.maptext_width = icon_size * 24
+	load_phrases = new(src)
+	load_phrases.maptext_height = world.icon_size * 6
+	load_phrases.maptext_width = world.icon_size * 24
 	load_phrases.maptext_x = 380
 	load_phrases.maptext_y = 100
+
+	station_description = new(src)
+	station_description.maptext_height = world.icon_size * 14
+	station_description.maptext_width = world.icon_size * 8
+	station_description.maptext_x = 10
+	station_description.maptext_y = 80
+
+	logo = new(src)
+
+	if(!owner_hud.screen_groups[HUD_GROUP_SCREEN_OVERLAYS])
+		owner_hud.screen_groups[HUD_GROUP_SCREEN_OVERLAYS] = list()
+	if(!islist(owner_hud.screen_groups[HUD_GROUP_SCREEN_OVERLAYS]))
+		owner_hud.screen_groups[HUD_GROUP_SCREEN_OVERLAYS] = list(owner_hud.screen_groups[HUD_GROUP_SCREEN_OVERLAYS])
+
+	owner_hud.screen_groups[HUD_GROUP_SCREEN_OVERLAYS] += load_phrases
+	owner_hud.screen_groups[HUD_GROUP_SCREEN_OVERLAYS] += station_description
+	owner_hud.screen_groups[HUD_GROUP_SCREEN_OVERLAYS] += logo
+
+	owner_hud.hud_version = HUD_STYLE_NOHUD
+	owner_hud.show_hud(owner_hud.hud_version)
 
 	last_phrase_change = world.time
 	phrase_index = rand(1, length(loading_phrases))
 	text_phrase = loading_phrases[phrase_index]
 
+	if(SStrain_controller.planned_to_load && !(SStrain_controller.planned_to_load.station_flags & TRAINSTATION_ABSCTRACT))
+		var/planed_desc = SStrain_controller.planned_to_load.desc
+		var/planed_name = SStrain_controller.planned_to_load.name
+		station_description.maptext = {"<div style="font-size:40%; text-align:left;">
+											<b>[planed_name]</b>
+											[planed_desc]
+										</div>"}
+	else
+		station_description.maptext = ""
+
 	update_loading_text(TRUE)
+
 
 /atom/movable/screen/fullscreen/flash/black/station_loading/Destroy()
 	if(timer_id)
 		deltimer(timer_id)
 		timer_id = null
 
-	owner_hud.screen_groups[HUD_GROUP_STATIC] -= load_phrases
-	owner_hud.screen_groups[HUD_GROUP_STATIC] -= logo
-	owner_hud.hud_version = HUD_STYLE_STANDARD
-	owner_hud.show_hud(owner_hud.hud_version)
+	if(owner_hud)
+		owner_hud.screen_groups[HUD_GROUP_SCREEN_OVERLAYS] -= load_phrases
+		owner_hud.screen_groups[HUD_GROUP_SCREEN_OVERLAYS] -= station_description
+		owner_hud.screen_groups[HUD_GROUP_SCREEN_OVERLAYS] -= logo
+
+		if(owner_hud.mymob)
+			owner_hud.hud_version = HUD_STYLE_STANDARD
+			owner_hud.show_hud(owner_hud.hud_version)
 
 	QDEL_NULL(load_phrases)
+	QDEL_NULL(station_description)
 	QDEL_NULL(logo)
-	. = ..()
+
+	owner_hud = null
+
+	return ..()
+
 
 /atom/movable/screen/fullscreen/flash/black/station_loading/proc/get_next_phrase()
 	phrase_index++
+
 	if(phrase_index > length(loading_phrases))
 		phrase_index = 1
 
@@ -1517,13 +1555,14 @@ ADMIN_VERB(open_train_controller, R_ADMIN, "Open train controller", "Open active
 		text_phrase = get_next_phrase()
 
 	dot_count = (dot_count + 1) % 5
+
 	var/dots = ""
 	for(var/i = 1, i <= dot_count, i++)
 		dots += "."
 
 	load_phrases.maptext = {"<div style="font:'Small Fonts'">[text_phrase][dots]</div>"}
-	timer_id = addtimer(CALLBACK(src, PROC_REF(update_loading_text), FALSE), update_interval, TIMER_STOPPABLE)
 
+	timer_id = addtimer(CALLBACK(src, PROC_REF(update_loading_text), FALSE), update_interval, TIMER_STOPPABLE)
 /datum/looping_sound/global_sound/train_sound_loop
 	sounds_to_play = list(
 		'fenysha_events/sounds/loop_trainride.ogg' = 63 SECONDS,

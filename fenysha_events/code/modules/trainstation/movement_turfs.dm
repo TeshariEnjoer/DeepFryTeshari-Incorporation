@@ -29,6 +29,8 @@
 	// Whether the turf contents are currently being processed
 	VAR_PRIVATE/processing_content = FALSE
 
+	var/glide_size_override = 8
+
 /turf/open/moving/Initialize(mapload)
 	. = ..()
 	SSmoving_turfs.register(src)
@@ -150,7 +152,7 @@
 		return
 
 /turf/open/moving/proc/move_and_bump(turf/target, atom/movable/AM)
-	AM.Move(target, SStrain_controller.abstract_moving_direction)
+	AM.Move(target, SStrain_controller.abstract_moving_direction, src.glide_size_override)
 
 /turf/open/moving/update_appearance(updates)
 	. = ..()
