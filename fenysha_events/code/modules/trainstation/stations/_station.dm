@@ -310,11 +310,16 @@
 			POOL_ASYNC_RELEASE(AM)
 		// Still reset baseturfs either way: the incoming ChangeTurf inherits them, so skipping this would leave
 		// the outgoing station's base under the new one.
+		// baseturf_bottom is resolved per z-level by ChangeTurf, so what an explosion exposes is whatever
+		// ZTRAIT_BASETURF says. Hardcoding space here is what put space under every station floor.
 		if(!clear_turfs)
-			T.baseturfs = /turf/open/space
+			T.baseturfs = /turf/baseturf_bottom
 			continue
 		T.ChangeTurf(/turf/open/space, null, CHANGETURF_DEFER_CHANGE)
-		T.baseturfs = /turf/open/space
+		T.baseturfs = /turf/baseturf_bottom
+
+	// After the contents purge, so buttons and doors have already unregistered themselves.
+	purge_elevators_in(docking_turfs)
 
 	docking_turfs.Cut()
 	template.created_atoms = null

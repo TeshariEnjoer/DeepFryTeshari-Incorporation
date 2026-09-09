@@ -43,6 +43,54 @@ GLOBAL_LIST_INIT(all_elevators, list())
 		/obj/machinery/door/poddoor/story/elevator,
 	)
 
+/datum/elevator/Destroy(force)
+	// Buttons and doors normally unregister themselves, but on a station unload they may already be
+	// gone - drop our side of the link either way so nothing is left pointing at a dead datum.
+	for(var/obj/machinery/button/elevator_control/button as anything in all_buttons)
+		button.control = null
+	elevator_turfs_by_floor = null
+	buttons_by_floor = null
+	doors_by_floor = null
+	all_buttons = null
+	request_queue = null
+	return ..()
+
+/// TRUE if any of this elevator's platform turfs is in the given block.
+/datum/elevator/proc/overlaps_turfs(list/block)
+	for(var/floor_key in elevator_turfs_by_floor)
+		for(var/turf/platform_turf as anything in elevator_turfs_by_floor[floor_key])
+			if(block[platform_turf])
+				return TRUE
+	return FALSE
+
+/**
+ * Drops every elevator whose platform sits inside the given turfs.
+ *
+ * Elevators live in GLOB.all_elevators for the life of the round while the station templates that
+ * define them load and unload repeatedly. A surviving datum keeps the previous visit's current_floor
+ * and turf lists, so the rebuilt map and the datum disagree about where the platform is. Deleting it
+ * means the markers rebuild it from nothing on the next load.
+ */
+/proc/purge_elevators_in(list/turfs)
+	if(!length(turfs))
+		return
+
+	var/list/block = list()
+	for(var/turf/blocked_turf as anything in turfs)
+		block[blocked_turf] = TRUE
+
+	// Collect first: deleting while walking GLOB.all_elevators would skip entries.
+	var/list/doomed = list()
+	for(var/id in GLOB.all_elevators)
+		var/datum/elevator/elevator = GLOB.all_elevators[id]
+		if(elevator.overlaps_turfs(block))
+			doomed += id
+
+	for(var/id in doomed)
+		var/datum/elevator/elevator = GLOB.all_elevators[id]
+		GLOB.all_elevators -= id
+		qdel(elevator)
+
 /datum/elevator/proc/num_to_floor(num)
 	return "floor_[num]"
 
@@ -63,7 +111,7 @@ GLOBAL_LIST_INIT(all_elevators, list())
 	var/floor_key = num_to_floor(floor)
 	if(!elevator_turfs_by_floor[floor_key])
 		elevator_turfs_by_floor[floor_key] = list()
-	elevator_turfs_by_floor[floor_key] += T
+	elevator_turfs_by_floor[floor_key] |= T
 
 
 /datum/elevator/proc/unregister_turf(turf/T, floor)
@@ -183,6 +231,9 @@ GLOBAL_LIST_INIT(all_elevators, list())
 	var/travel_time = floor_delta * time_per_floor
 
 	sleep(travel_time)
+	// The station can unload mid-ride, which purges us.
+	if(QDELETED(src))
+		return
 
 	move_platform(current_floor, target_floor)
 	current_floor = target_floor
@@ -190,6 +241,13 @@ GLOBAL_LIST_INIT(all_elevators, list())
 	// announce_floor(current_floor)
 	open_floor(current_floor)
 
+
+/// Row-major, so both floors are walked the same way. Registration order follows atom init order,
+/// which map loading is free to reshuffle - pairing floors by index needs a stable spatial order.
+/proc/cmp_elevator_turf_position(turf/a, turf/b)
+	if(a.y != b.y)
+		return a.y - b.y
+	return a.x - b.x
 
 /datum/elevator/proc/move_platform(old_floor, new_floor)
 	var/list/old_turfs = get_floor_turfs(old_floor)
@@ -200,6 +258,9 @@ GLOBAL_LIST_INIT(all_elevators, list())
 
 	if(length(old_turfs) != length(new_turfs))
 		CRASH("Elevator [elevator_id]: floor [old_floor] and [new_floor] have different platform sizes!")
+
+	sortTim(old_turfs, GLOBAL_PROC_REF(cmp_elevator_turf_position))
+	sortTim(new_turfs, GLOBAL_PROC_REF(cmp_elevator_turf_position))
 
 	for(var/i = 1, i <= old_turfs.len, i++)
 		var/turf/source = old_turfs[i]

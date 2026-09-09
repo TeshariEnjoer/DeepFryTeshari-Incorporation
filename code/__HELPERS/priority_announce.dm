@@ -83,7 +83,7 @@
 	else
 		finalized_announcement = CHAT_ALERT_DEFAULT_SPAN(jointext(announcement_strings, ""))
 
-	dispatch_announcement_to_players(finalized_announcement, players, sound, translatable_body = text) // FENYSHA EDIT - AUTOTRANSLATE
+	dispatch_announcement_to_players(finalized_announcement, players, sound, translatable_body = list(text, title)) // FENYSHA EDIT - AUTOTRANSLATE - body first, it is the longer fragment
 
 	if(isnull(sender_override) && players == GLOB.player_list)
 		if(length(title) > 0)
@@ -156,7 +156,7 @@
 		finalized_announcement = CHAT_ALERT_DEFAULT_SPAN(jointext(minor_announcement_strings, ""))
 
 	var/custom_sound = sound_override || (alert ? 'modular_skyrat/modules/alerts/sound/alerts/alert1.ogg' : 'sound/announcer/notice/notice2.ogg') // SKYRAT EDIT CHANGE - CUSTOM ANNOUNCEMENTS - Original: 'sound/announcer/notice/notice1.ogg'
-	dispatch_announcement_to_players(finalized_announcement, players, custom_sound, should_play_sound, translatable_body = message) // FENYSHA EDIT - AUTOTRANSLATE
+	dispatch_announcement_to_players(finalized_announcement, players, custom_sound, should_play_sound, translatable_body = list(message, title)) // FENYSHA EDIT - AUTOTRANSLATE - body first, it is the longer fragment
 
 /// Sends an announcement about the level changing to players. Uses the passed in datum and the subsystem's previous security level to generate the message.
 /proc/level_announce(datum/security_level/selected_level, previous_level_number)
@@ -181,7 +181,8 @@
 
 	var/finalized_announcement = CHAT_ALERT_COLORED_SPAN(current_level_color, jointext(level_announcement_strings, ""))
 
-	dispatch_announcement_to_players(finalized_announcement, GLOB.player_list, current_level_sound)
+	// FENYSHA EDIT CHANGE - AUTOTRANSLATE - ORIGINAL: dispatch_announcement_to_players(finalized_announcement, GLOB.player_list, current_level_sound)
+	dispatch_announcement_to_players(finalized_announcement, GLOB.player_list, current_level_sound, translatable_body = list(message, title))
 
 /// Proc that just generates a custom header based on variables fed into `priority_announce()`
 /// Will return a string.
@@ -199,6 +200,8 @@
 
 /// Proc that just dispatches the announcement to our applicable audience. Only the announcement is a mandatory arg.
 /// `should_play_sound` can also be a callback, if you want to only play the sound to specific players.
+// FENYSHA EDIT CHANGE - AUTOTRANSLATE - `translatable_body` takes a single string or a list of the
+// plain fragments inside the announcement (title and body), each swapped for the reader's language.
 /proc/dispatch_announcement_to_players(announcement, list/players = GLOB.player_list, sound_override = null, should_play_sound = TRUE, translatable_body = null)
 	// SKYRAT EDIT CHANGE BEGIN - CUSTOM ANNOUNCEMENTS
 	/* Original:
@@ -234,14 +237,17 @@
 			continue
 
 		// FENYSHA EDIT ADDITION BEGIN - AUTOTRANSLATE
-		// The announcement is one shared HTML string, so swap just the body
-		// in for readers who want it translated. The header and markup are
-		// left alone - only the plain body is ever sent to a translator.
+		// The announcement is one shared HTML string, so swap each plain fragment in for readers who
+		// want it translated. Headers and markup are left alone - only prose reaches a translator.
+		// Each swap chains off the last, so a fragment that is a substring of another is replaced
+		// once rather than twice.
 		var/shown_announcement = announcement
-		if(translatable_body)
-			var/translated_body = translated_chat_text(target.client, translatable_body)
-			if(translated_body != translatable_body)
-				shown_announcement = replacetext(announcement, translatable_body, translated_body)
+		for(var/fragment in (islist(translatable_body) ? translatable_body : list(translatable_body)))
+			if(!istext(fragment) || !length(fragment))
+				continue
+			var/translated_fragment = translated_chat_text(target.client, fragment)
+			if(translated_fragment != fragment)
+				shown_announcement = replacetext(shown_announcement, fragment, translated_fragment)
 		to_chat(target, shown_announcement)
 		// ORIGINAL: to_chat(target, announcement)
 		// FENYSHA EDIT ADDITION END

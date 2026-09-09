@@ -80,7 +80,7 @@
 	if(finished || timer_id)
 		return
 	start_time = world.time
-	timer_id = addtimer(CALLBACK(src, PROC_REF(advance)), TRANSLATION_MORPH_INTERVAL, TIMER_STOPPABLE | TIMER_LOOP)
+	timer_id = addtimer(CALLBACK(src, PROC_REF(advance)), TRANSLATION_MORPH_INTERVAL, TIMER_STOPPABLE | TIMER_LOOP | TIMER_DELETE_ME)
 	advance()
 
 /// Stops early and jumps straight to the destination text.

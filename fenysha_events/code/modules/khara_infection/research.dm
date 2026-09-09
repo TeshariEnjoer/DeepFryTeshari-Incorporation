@@ -440,6 +440,14 @@
 	<BR><BR>\
 	- Research Department"
 
+/obj/item/disk/tech_disk/khara_ammunition_basic
+	name = "technology disk - anti-khara armament"
+	desc = "A research disk containing recovered blueprints for basic anti-Khara ammunition and weaponry."
+
+/obj/item/disk/tech_disk/khara_ammunition_basic/Initialize(mapload)
+	. = ..()
+	stored_research.research_node_id(TECHWEB_NODE_KHARA_AMMUNITION_BASIC, TRUE, FALSE, FALSE)
+
 /datum/techweb_node/khara/khara_ammunition_advanced
 	id = TECHWEB_NODE_KHARA_AMMUNITION_ADVANCED
 	display_name = "Advanced Anti-Khara Weaponry"
