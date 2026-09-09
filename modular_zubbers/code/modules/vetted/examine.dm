@@ -1,4 +1,4 @@
-/mob/living/silicon/get_silicon_flavortext()
+/mob/living/silicon/get_silicon_flavortext(mob/user)
 	. = ..()
 	if(!CONFIG_GET(flag/check_vetted))
 		return

@@ -168,7 +168,7 @@
 	. = ..()
 	. += "Its master ID string seems to be [(!master_name || emagged) ? "empty" : master_name]."
 	//SKYRAT EDIT ADDITION BEGIN - CUSTOMIZATION
-	. += get_silicon_flavortext()
+	. += get_silicon_flavortext(user) // FENYSHA EDIT CHANGE - AUTOTRANSLATE - ORIGINAL: get_silicon_flavortext()
 	//SKYRAT EDIT ADDITION END
 
 /mob/living/silicon/pai/get_status_tab_items()

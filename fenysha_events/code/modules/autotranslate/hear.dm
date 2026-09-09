@@ -18,7 +18,7 @@
  * The caller must then, in order: swap raw_message for wrapped_text(), build
  * the runechat bubble, attach_runechat() it, and finally begin().
  */
-/mob/living/proc/try_begin_translation(atom/movable/speaker, raw_message, is_custom_emote, understood, message_obscured)
+/mob/proc/try_begin_translation(atom/movable/speaker, raw_message, is_custom_emote, understood, message_obscured)
 	// Emotes are not speech and are already excluded from IC language
 	// handling upstream.
 	if(is_custom_emote)
@@ -98,9 +98,8 @@
  * Translation for surfaces that render once and cannot animate - the ticket panels, which are
  * plain browse() windows with none of the chat panel's morph script behind them.
  *
- * Returns a finished translation when one is already cached, otherwise the original text, and
- * requests it so the panel's own Refresh link has it a moment later. Never wraps or defers,
- * because there is nothing on the other end to resolve a pending marker.
+ * Returns a finished translation when one is already cached, otherwise the original text. Never
+ * wraps or defers, because there is nothing on the other end to resolve a pending marker.
  */
 /proc/translated_panel_text(client/target, text)
 	if(isnull(target) || !istext(text) || !length(text))
@@ -117,18 +116,9 @@
 	if(!SSautotranslate.can_translate(source_language, target_language))
 		return text
 
-	var/cached = SSautotranslate.cached_translation(text, source_language, target_language)
-	if(!isnull(cached))
-		return cached
-
-	// Warm the cache for the next render. request_translation() stores the result itself, so the
-	// callback has nothing to do - it exists only because a request with no subscriber is rejected.
-	SSautotranslate.request_translation(text, source_language, target_language, CALLBACK(GLOBAL_PROC, GLOBAL_PROC_REF(translation_noop)))
-	return text
-
-/// Subscriber for requests made purely to populate the cache.
-/proc/translation_noop(result, success)
-	return
+	// Rendering never dispatches. translation_prewarm() does that, and re-renders the panel when
+	// the results land.
+	return SSautotranslate.cached_translation(text, source_language, target_language) || text
 
 /**
  * Swaps a known prose fragment inside an already-formatted line for its translation.
@@ -166,3 +156,77 @@
 	var/wrapped = handle.wrapped_text()
 	addtimer(CALLBACK(handle, TYPE_PROC_REF(/datum/translated_speech, begin)), 0)
 	return wrapped
+
+/**
+ * Fires cache-warming requests for a set of prose fragments and invokes on_ready once, after the
+ * last of them has landed.
+ *
+ * For browse() panels: they render once and cannot morph, so the only way to show a translation
+ * is to re-render the whole thing when one is available.
+ *
+ * Returns TRUE if anything was dispatched - if FALSE, on_ready never fires because every fragment
+ * was already cached or ineligible, and the render the caller just did is already final.
+ */
+/proc/translation_prewarm(client/target, list/bodies, datum/callback/on_ready)
+	if(isnull(target) || isnull(on_ready) || !length(bodies))
+		return FALSE
+
+	var/target_language = autotranslate_pref_to_code(target.prefs?.read_preference(/datum/preference/choiced/autotranslate_target))
+	if(isnull(target_language))
+		return FALSE
+
+	// Deduplicated: a ticket usually repeats the same line in both the admin and player renderings.
+	var/list/wanted = list()
+	for(var/body in bodies)
+		if(!istext(body) || !length(body) || wanted[body])
+			continue
+		var/source_language = autotranslate_detect_language(body)
+		if(!SSautotranslate.can_translate(source_language, target_language))
+			continue
+		if(!isnull(SSautotranslate.cached_translation(body, source_language, target_language)))
+			continue
+		wanted[body] = source_language
+
+	if(!length(wanted))
+		return FALSE
+
+	var/datum/translation_prewarm/batch = new(length(wanted), on_ready)
+	for(var/body in wanted)
+		SSautotranslate.request_translation(body, wanted[body], target_language, CALLBACK(batch, TYPE_PROC_REF(/datum/translation_prewarm, one_landed)))
+	return TRUE
+
+/// Counts a batch of warming requests down to zero, then fires once. Every request resolves one
+/// way or the other, including on timeout, so this cannot be left hanging.
+/datum/translation_prewarm
+	var/outstanding = 0
+	var/datum/callback/on_ready
+
+/datum/translation_prewarm/New(count, datum/callback/ready)
+	outstanding = count
+	on_ready = ready
+
+/datum/translation_prewarm/Destroy()
+	on_ready = null
+	return ..()
+
+/datum/translation_prewarm/proc/one_landed(result, success)
+	if(--outstanding > 0)
+		return
+	on_ready?.Invoke()
+	qdel(src)
+
+/**
+ * Swaps the prose inside an already-formatted chat line for this listener's translation.
+ *
+ * For anything assembled before it is sent - narrations, admin logs, mentor chat - where the line
+ * carries links, key names and span wrappers around the part a player actually wrote. Only the
+ * prose reaches the backend; the scaffolding survives untouched.
+ *
+ * `author` is whoever wrote it, and never sees their own words rewritten. Returns the line
+ * unchanged when there is nothing to swap, so callers can use it unconditionally.
+ */
+/proc/translated_line(client/target, formatted, raw, client/author)
+	var/translated = translated_chat_text(target, raw, author)
+	if(translated == raw)
+		return formatted
+	return replacetext(formatted, raw, translated)

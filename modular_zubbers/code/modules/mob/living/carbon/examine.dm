@@ -5,19 +5,30 @@
 	else
 		return regular_examine
 
-/mob/living/carbon/proc/get_flavor_text()
-	var/flavor_text_link
-	/// The first 1-FLAVOR_PREVIEW_LIMIT characters in the mob's "flavor_text" DNA feature. FLAVOR_PREVIEW_LIMIT is defined in flavor_defines.dm.
-	var/preview_text = copytext_char((dna.features["flavor_text"]), 1, FLAVOR_PREVIEW_LIMIT)
+// FENYSHA EDIT CHANGE - takes the examiner so the description can be translated for them.
+// ORIGINAL: /mob/living/carbon/proc/get_flavor_text()
+/mob/living/carbon/proc/get_flavor_text(mob/user)
+	var/full_text = dna.features["flavor_text"]
 	// What examine_tgui.dm uses to determine if flavor text appears as "Obscured".
 	var/obscurity_examine_pref = (client?.prefs?.read_preference(/datum/preference/toggle/obscurity_examine))
 	var/face_obscured = (covered_slots & HIDEFACE) && obscurity_examine_pref
 
+#if defined(NOERP)
+	// FENYSHA EDIT ADDITION - no examine panel on these builds, so the description goes
+	// straight into chat rather than behind a look-closer link.
+	if(face_obscured || !length(full_text))
+		return null
+	return span_notice(translated_chat_text(user?.client, full_text, client))
+#else
+	var/flavor_text_link
+	/// The first 1-FLAVOR_PREVIEW_LIMIT characters in the mob's "flavor_text" DNA feature. FLAVOR_PREVIEW_LIMIT is defined in flavor_defines.dm.
+	var/preview_text = copytext_char(full_text, 1, FLAVOR_PREVIEW_LIMIT)
 	if (!(face_obscured))
-		flavor_text_link = span_notice("[preview_text]... <a href='byond://?src=[REF(src)];lookup_info=open_examine_panel'>\[Look closer?\]</a>")
+		flavor_text_link = span_notice("[translated_chat_text(user?.client, preview_text, client)]... <a href='byond://?src=[REF(src)];lookup_info=open_examine_panel'>\[Look closer?\]</a>") // FENYSHA EDIT CHANGE - AUTOTRANSLATE - was [preview_text]
 	else
 		flavor_text_link = span_notice("<a href='byond://?src=[REF(src)];lookup_info=open_examine_panel'>\[Examine closely...\]</a>")
 	return flavor_text_link
+#endif
 
 
 /atom/proc/get_chat_examine_headshot(mob/user)
@@ -45,5 +56,5 @@
 	return "<div class='chat_headshot_top chat_headshot_frame'>[chat_headshot(html_encode(headshot))]</div>"
 
 
-/mob/living/carbon/alien/get_flavor_text()
+/mob/living/carbon/alien/get_flavor_text(mob/user)
 	return desc

@@ -9,8 +9,15 @@ GAME_VERB_PROC(/client, cmd_mentor_say, "Msay", "Mentor", msg as text)
 	msg = emoji_parse(msg)
 	log_mentor("MSAY: [key_name(src)] : [msg]")
 
+	// FENYSHA EDIT ADDITION - AUTOTRANSLATE - kept before the span wrapping goes on
+	var/raw_msg = msg
+
 	if(check_rights_for(src, R_ADMIN,0))
 		msg = span_mentor("<b><font color ='#8A2BE2'><span class='prefix'>MENTOR:</span> <EM>[key_name(src, 0, 0)]</EM>: <span class='message'>[msg]</span></font></b>")
 	else
 		msg = span_mentor("<b><font color ='#E236D8'><span class='prefix'>MENTOR:</span> <EM>[key_name(src, 0, 0)]</EM>: <span class='message'>[msg]</span></font></b>")
-	to_chat(GLOB.admins | GLOB.mentors, msg)
+	// FENYSHA EDIT CHANGE BEGIN - AUTOTRANSLATE - sent per listener, each has their own language
+	for(var/client/listener as anything in (GLOB.admins | GLOB.mentors))
+		to_chat(listener, translated_line(listener, msg, raw_msg, src))
+	// ORIGINAL: to_chat(GLOB.admins | GLOB.mentors, msg)
+	// FENYSHA EDIT CHANGE END

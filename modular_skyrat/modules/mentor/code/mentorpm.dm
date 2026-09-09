@@ -52,20 +52,22 @@
 	log_mentor("Mentor PM: [key_name(src)]->[key_name(target)]: [msg]")
 
 	msg = emoji_parse(msg)
+	// FENYSHA EDIT ADDITION - AUTOTRANSLATE - the prose, before any formatting goes around it
+	var/raw_msg = msg
 	SEND_SOUND(target, 'sound/items/bikehorn.ogg')
 	var/show_char = CONFIG_GET(flag/mentors_mobname_only)
 	if(target.is_mentor())
 		if(is_mentor())//both are mentors
-			to_chat(target, span_mentor(span_purple("Mentor PM from-<b>[key_name_mentor(src, target, TRUE, FALSE, FALSE)]</b>: [msg]")))
+			to_chat(target, translated_line(target, span_mentor(span_purple("Mentor PM from-<b>[key_name_mentor(src, target, TRUE, FALSE, FALSE)]</b>: [msg]")), raw_msg, src)) // FENYSHA EDIT CHANGE - AUTOTRANSLATE
 			to_chat(src, span_mentor(span_blue("Mentor PM to-<b>[key_name_mentor(target, target, TRUE, FALSE, FALSE)]</b>: [msg]")))
 
 		else		//recipient is a mentor but sender is not
-			to_chat(target, span_mentor(span_purple("Reply PM from-<b>[key_name_mentor(src, target, TRUE, FALSE, show_char)]</b>: [msg]")))
+			to_chat(target, translated_line(target, span_mentor(span_purple("Reply PM from-<b>[key_name_mentor(src, target, TRUE, FALSE, show_char)]</b>: [msg]")), raw_msg, src)) // FENYSHA EDIT CHANGE - AUTOTRANSLATE
 			to_chat(src, span_mentor("Mentor PM to-<b>[key_name_mentor(target, target, TRUE, FALSE, FALSE)]</b>: [msg]"))
 
 	else
 		if(is_mentor())	//sender is a mentor but recipient is not.
-			to_chat(target, span_mentor(span_purple("Mentor PM from-<b>[key_name_mentor(src, target, TRUE, FALSE, FALSE)]</b>: [msg]")))
+			to_chat(target, translated_line(target, span_mentor(span_purple("Mentor PM from-<b>[key_name_mentor(src, target, TRUE, FALSE, FALSE)]</b>: [msg]")), raw_msg, src)) // FENYSHA EDIT CHANGE - AUTOTRANSLATE
 			to_chat(src, span_mentor("Mentor PM to-<b>[key_name_mentor(target, target, TRUE, FALSE, show_char)]</b>: [msg]"))
 
 	//we don't use message_Mentors here because the sender/receiver might get it too // We should make it an argument for that proc to ignore the sender, then. :(
@@ -74,4 +76,5 @@
 	for(var/it in GLOB.mentors)
 		var/client/mentor = it
 		if(mentor?.key != key && mentor?.key != target.key)	//check client/mentor is an Mentor and isn't the sender or recipient
-			to_chat(mentor, span_mentor("<B>Mentor PM: [key_name_mentor(src, mentor, FALSE, FALSE, show_char_sender)]-&gt;[key_name_mentor(target, mentor, FALSE, FALSE, show_char_recip)]:</B> [span_blue(msg)]")) //inform mentor
+			// FENYSHA EDIT CHANGE - AUTOTRANSLATE
+			to_chat(mentor, translated_line(mentor, span_mentor("<B>Mentor PM: [key_name_mentor(src, mentor, FALSE, FALSE, show_char_sender)]-&gt;[key_name_mentor(target, mentor, FALSE, FALSE, show_char_recip)]:</B> [span_blue(msg)]"), raw_msg, src)) //inform mentor

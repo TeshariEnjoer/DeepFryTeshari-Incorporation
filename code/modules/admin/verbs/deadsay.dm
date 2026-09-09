@@ -19,7 +19,12 @@ ADMIN_VERB(dsay, R_NONE, "DSay", "Speak to the dead.", ADMIN_CATEGORY_GAME, mess
 		admin_name = pick(strings("admin_nicknames.json", "names", "config"))
 	var/name_and_rank = "[span_tooltip(rank_name, "STAFF")] ([admin_name])"
 
-	deadchat_broadcast("[span_prefix("DEAD:")] [name_and_rank] says, <span class='message'>\"[emoji_parse(message)]\"</span>")
+	// FENYSHA EDIT CHANGE BEGIN - AUTOTRANSLATE - the emoji-parsed text is what ends up in the
+	// line, so that is what has to be handed over for the swap to find it.
+	var/parsed_message = emoji_parse(message)
+	deadchat_broadcast("[span_prefix("DEAD:")] [name_and_rank] says, <span class='message'>\"[parsed_message]\"</span>", original_message = parsed_message, author = user)
+	// ORIGINAL: deadchat_broadcast("[span_prefix("DEAD:")] [name_and_rank] says, <span class='message'>\"[emoji_parse(message)]\"</span>")
+	// FENYSHA EDIT CHANGE END
 
 	BLACKBOX_LOG_ADMIN_VERB("Dsay")
 

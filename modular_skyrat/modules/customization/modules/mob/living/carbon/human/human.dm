@@ -25,8 +25,12 @@
 					to_chat(usr, span_notice("[jointext(line, "\n")]"))
 #endif
 			if("open_examine_panel")
+#if defined(NOERP) // FENYSHA EDIT ADDITION - no panel on these builds; examine prints the description instead
+				return
+#else
 				tgui.holder = src
 				tgui.ui_interact(usr) //datum has a tgui component, here we open the window
+#endif
 
 /mob/living/carbon/human/species/vox
 	race = /datum/species/vox

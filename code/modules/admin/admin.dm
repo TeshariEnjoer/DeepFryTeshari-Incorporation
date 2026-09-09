@@ -1,10 +1,22 @@
 ////////////////////////////////
-/proc/message_admins(msg)
+// FENYSHA EDIT CHANGE BEGIN - AUTOTRANSLATE - `translatable_body` is the plain prose inside msg.
+// Supply it and each admin gets the line in their own language; omit it and this behaves exactly
+// as before, as one shared broadcast.
+// ORIGINAL: /proc/message_admins(msg)
+/proc/message_admins(msg, translatable_body, client/author)
 	msg = "<span class=\"admin\"><span class=\"prefix\">ADMIN LOG:</span> <span class=\"message\">[msg]</span></span>"
-	to_chat(GLOB.admins,
-		type = MESSAGE_TYPE_ADMINLOG,
-		html = msg,
-		confidential = TRUE)
+	if(isnull(translatable_body))
+		to_chat(GLOB.admins,
+			type = MESSAGE_TYPE_ADMINLOG,
+			html = msg,
+			confidential = TRUE)
+		return
+	for(var/client/admin as anything in GLOB.admins)
+		to_chat(admin,
+			type = MESSAGE_TYPE_ADMINLOG,
+			html = translated_line(admin, msg, translatable_body, author),
+			confidential = TRUE)
+// FENYSHA EDIT CHANGE END
 
 /proc/relay_msg_admins(msg)
 	msg = "<span class=\"admin\"><span class=\"prefix\">RELAY:</span> <span class=\"message\">[msg]</span></span>"

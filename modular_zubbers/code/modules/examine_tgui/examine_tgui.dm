@@ -14,6 +14,10 @@
 	var/mob/living/holder
 	/// Lazy assoc list of viewers to screens
 	var/list/viewer_screens
+	/// FENYSHA EDIT ADDITION - AUTOTRANSLATE. Viewers already asked for a translation. tgui has
+	/// no morph, so the panel re-renders when one lands - once per viewer, or a fragment that
+	/// never translates would re-render forever.
+	var/list/translation_warmed
 
 
 /mob/living/carbon/human/Destroy()
@@ -30,10 +34,17 @@
 /datum/examine_panel/ui_close(mob/user)
 	var/viewer_screen = LAZYACCESS(viewer_screens, user)
 	LAZYREMOVE(viewer_screens, user)
+	// FENYSHA EDIT ADDITION - AUTOTRANSLATE
+	LAZYREMOVE(translation_warmed, user)
 	qdel(viewer_screen)
+
+/// FENYSHA EDIT ADDITION - AUTOTRANSLATE
+/datum/examine_panel/proc/on_translations_ready()
+	SStgui.update_uis(src)
 
 /datum/examine_panel/Destroy(force)
 	holder = null
+	translation_warmed = null // FENYSHA EDIT ADDITION - AUTOTRANSLATE
 	QDEL_LIST_ASSOC_VAL(viewer_screens)
 	. = ..()
 
@@ -71,6 +82,7 @@
 	var/art_ref = ""
 	var/art_ref_nsfw = preferences?.read_preference(/datum/preference/toggle/art_ref_nsfw)
 	var/character_ad = ""
+	var/ad_body = "" // FENYSHA EDIT ADDITION - AUTOTRANSLATE
 
 	var/attraction = preferences?.read_preference(/datum/preference/choiced/attraction)
 	var/display_gender = preferences?.read_preference(/datum/preference/choiced/display_gender)
@@ -110,7 +122,9 @@
 		character_ad += "Furries: [furries] | Scalies: [scalies] | Other: [others]\n"
 		character_ad += "Demis: [demihumans] | Humans: [humans]\n"
 		character_ad += "\n"
-		character_ad += preferences.read_preference(/datum/preference/text/character_ad)
+		// FENYSHA EDIT CHANGE - AUTOTRANSLATE - kept apart so only the player prose is translated
+		// ORIGINAL: character_ad += preferences.read_preference(/datum/preference/text/character_ad)
+		ad_body = preferences.read_preference(/datum/preference/text/character_ad)
 
 		// Now we handle silicon and/or human, order doesn't really matter
 		// If other variants of mob/living need to be handled at some point, put them here
@@ -167,6 +181,20 @@
 				custom_species_lore += lore.Join("\n\n")
 			else
 				custom_species_lore = holder_human.dna.features["custom_species_lore"]
+
+	// FENYSHA EDIT ADDITION BEGIN - AUTOTRANSLATE
+	// tgui gets no pending markers or morph, so show what is cached, request the rest and
+	// re-render this viewer when it arrives.
+	var/client/viewer = user?.client
+	var/list/prose = list(flavor_text, flavor_text_nsfw, custom_species_lore, ad_body)
+	flavor_text = translated_panel_text(viewer, flavor_text)
+	flavor_text_nsfw = translated_panel_text(viewer, flavor_text_nsfw)
+	custom_species_lore = translated_panel_text(viewer, custom_species_lore)
+	character_ad += translated_panel_text(viewer, ad_body)
+	if(!LAZYACCESS(translation_warmed, user))
+		LAZYSET(translation_warmed, user, TRUE)
+		translation_prewarm(viewer, prose, CALLBACK(src, PROC_REF(on_translations_ready)))
+	// FENYSHA EDIT ADDITION END
 
 	var/atom/movable/screen/map_view/examine_panel_screen/viewer_screen = LAZYACCESS(viewer_screens, user)
 

@@ -71,15 +71,29 @@
 			to_follow = V.source
 	var/link = FOLLOW_LINK(src, to_follow)
 	var/is_custom_emote = message_mods[MODE_CUSTOM_SAY_ERASE_INPUT]
+	// FENYSHA EDIT ADDITION BEGIN - AUTOTRANSLATE
+	// ghosts understand everything and never get starred speech
+	var/datum/translated_speech/translation = try_begin_translation(speaker, raw_message, is_custom_emote, TRUE, FALSE)
+	if(translation)
+		raw_message = translation.wrapped_text()
+	// FENYSHA EDIT ADDITION END
 	// Create map text prior to modifying message for goonchat
 	if (safe_read_pref(client, /datum/preference/toggle/enable_runechat) && (safe_read_pref(client, /datum/preference/toggle/enable_runechat_non_mobs) || ismob(speaker)))
 		if(is_custom_emote)
 			create_chat_message(speaker, null, message_mods[MODE_CUSTOM_SAY_EMOTE], spans, EMOTE_MESSAGE)
 		else
-			create_chat_message(speaker, message_language, raw_message, spans)
+			// FENYSHA EDIT CHANGE BEGIN - AUTOTRANSLATE
+			// ORIGINAL: create_chat_message(speaker, message_language, raw_message, spans)
+			var/datum/chatmessage/bubble = create_chat_message(speaker, message_language, raw_message, spans)
+			translation?.attach_runechat(bubble)
+			// FENYSHA EDIT CHANGE END
 	// Recompose the message, because it's scrambled by default
 	var/message = compose_message(speaker, message_language, raw_message, radio_freq, radio_freq_name, radio_freq_color, spans, message_mods)
 	to_chat(src,
 		html = "[link] [message]",
 		avoid_highlighting = speaker == src)
+	// FENYSHA EDIT ADDITION BEGIN - AUTOTRANSLATE
+	// last: a cache hit resolves synchronously, so both surfaces must exist first
+	translation?.begin()
+	// FENYSHA EDIT ADDITION END
 	return HEAR_HEARD | HEAR_UNDERSTOOD

@@ -417,7 +417,9 @@ GLOBAL_LIST_INIT(skin_tone_names, list(
 #define SEE_DEADCHAT_NORMAL (1<<1)
 // Displays a message in deadchat, sent by source. source is not linkified, message is, to avoid stuff like character names to be linkified.
 // Automatically gives the class deadsay to the whole message (message + source)
-/proc/deadchat_broadcast(message, source=null, mob/follow_target=null, turf/turf_target=null, speaker_key=null, message_type=DEADCHAT_REGULAR, admin_only=FALSE, original_message)
+// FENYSHA EDIT CHANGE - AUTOTRANSLATE - `author` is whoever wrote the line, excluded from translation.
+// ORIGINAL: /proc/deadchat_broadcast(message, source=null, mob/follow_target=null, turf/turf_target=null, speaker_key=null, message_type=DEADCHAT_REGULAR, admin_only=FALSE, original_message)
+/proc/deadchat_broadcast(message, source=null, mob/follow_target=null, turf/turf_target=null, speaker_key=null, message_type=DEADCHAT_REGULAR, admin_only=FALSE, original_message, client/author)
 	message = span_deadsay("[source][span_linkify(message)]")
 
 	if(admin_only)
@@ -463,8 +465,22 @@ GLOBAL_LIST_INIT(skin_tone_names, list(
 				if(!(chat_toggles & CHAT_LOGIN_LOGOUT))
 					continue
 
+		// FENYSHA EDIT ADDITION BEGIN - AUTOTRANSLATE
+		// Deadchat is assembled once and fanned out, so the swap has to happen per listener here
+		// rather than in the caller. The dead understand everything and deadchat is never starred.
+		var/datum/translated_speech/translation
+		var/shown_message = message
+		if(length(original_message))
+			translation = M.try_begin_translation(follow_target, original_message, FALSE, TRUE, FALSE)
+			if(translation)
+				shown_message = replacetext(message, original_message, translation.wrapped_text())
+			else if(!ismob(follow_target))
+				// No speaker mob to hang a bubble on - dsay and friends. Chat only, no morph.
+				shown_message = translated_line(M.client, message, original_message, author)
+		// FENYSHA EDIT ADDITION END
+
 		if(isobserver(M))
-			var/rendered_message = message
+			var/rendered_message = shown_message // FENYSHA EDIT CHANGE - AUTOTRANSLATE - ORIGINAL: message
 			override = SEE_DEADCHAT_NORMAL
 
 			if(follow_target)
@@ -473,18 +489,28 @@ GLOBAL_LIST_INIT(skin_tone_names, list(
 					F = FOLLOW_OR_TURF_LINK(M, follow_target, turf_target)
 				else
 					F = FOLLOW_LINK(M, follow_target)
-				rendered_message = "[F] [message]"
+				rendered_message = "[F] [shown_message]" // FENYSHA EDIT CHANGE - AUTOTRANSLATE - ORIGINAL: "[F] [message]"
 			else if(turf_target)
 				var/turf_link = TURF_LINK(M, turf_target)
-				rendered_message = "[turf_link] [message]"
+				rendered_message = "[turf_link] [shown_message]" // FENYSHA EDIT CHANGE - AUTOTRANSLATE - ORIGINAL: "[turf_link] [message]"
 
 			to_chat(M, rendered_message, avoid_highlighting = speaker_key == M.key)
 		else
-			to_chat(M, message, avoid_highlighting = speaker_key == M.key)
+			// FENYSHA EDIT CHANGE - AUTOTRANSLATE - ORIGINAL: to_chat(M, message, avoid_highlighting = speaker_key == M.key)
+			to_chat(M, shown_message, avoid_highlighting = speaker_key == M.key)
 
 		// Ghost runechat
-		if(original_message && ((override & SEE_DEADCHAT_NORMAL) || M.see_invisible >= follow_target.invisibility) && (!SSlag_switch.measures[DISABLE_DEAD_RUNECHAT] || HAS_TRAIT(M, TRAIT_BYPASS_MEASURES)) && M.runechat_prefs_check(M))
-			M.create_chat_message(follow_target, /datum/language/common, original_message, list(SPAN_ITALICS))
+		// FENYSHA EDIT CHANGE - AUTOTRANSLATE - added the follow_target null guard; without it a
+		// caller that passes original_message with no speaker derefs null in the second clause.
+		if(original_message && follow_target && ((override & SEE_DEADCHAT_NORMAL) || M.see_invisible >= follow_target.invisibility) && (!SSlag_switch.measures[DISABLE_DEAD_RUNECHAT] || HAS_TRAIT(M, TRAIT_BYPASS_MEASURES)) && M.runechat_prefs_check(M))
+			// FENYSHA EDIT CHANGE - AUTOTRANSLATE
+			// ORIGINAL: M.create_chat_message(follow_target, /datum/language/common, original_message, list(SPAN_ITALICS))
+			var/datum/chatmessage/bubble = M.create_chat_message(follow_target, /datum/language/common, original_message, list(SPAN_ITALICS))
+			translation?.attach_runechat(bubble)
+
+		// FENYSHA EDIT ADDITION - AUTOTRANSLATE
+		// Last: a cache hit resolves synchronously, so both surfaces must exist first.
+		translation?.begin()
 #undef SEE_DEADCHAT_ADMIN
 #undef SEE_DEADCHAT_NORMAL
 

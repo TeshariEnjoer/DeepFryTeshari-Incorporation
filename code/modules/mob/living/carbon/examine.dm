@@ -307,7 +307,7 @@
 						break
 #endif
 
-	var/flavor_text_link = get_flavor_text()
+	var/flavor_text_link = get_flavor_text(user) // FENYSHA EDIT CHANGE - AUTOTRANSLATE - ORIGINAL: get_flavor_text()
 	if(flavor_text_link)
 		. += flavor_text_link
 

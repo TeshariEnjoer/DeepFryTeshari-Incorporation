@@ -30,7 +30,8 @@
 		to_chat(src, "<div class=\"motd\">[motd]</div>", handle_whitespace=FALSE)
 
 	if(GLOB.admin_notice)
-		to_chat(src, span_notice("<b>Admin Notice:</b>\n \t [GLOB.admin_notice]"))
+		// FENYSHA EDIT CHANGE - AUTOTRANSLATE - ORIGINAL: to_chat(src, span_notice("<b>Admin Notice:</b>\n \t [GLOB.admin_notice]"))
+		to_chat(src, translated_line(client, span_notice("<b>Admin Notice:</b>\n \t [GLOB.admin_notice]"), GLOB.admin_notice))
 
 	//SKYRAT EDIT ADDITION
 	var/soft_player_cap = CONFIG_GET(number/player_soft_cap)

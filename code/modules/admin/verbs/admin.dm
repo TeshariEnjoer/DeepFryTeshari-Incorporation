@@ -23,7 +23,8 @@ ADMIN_VERB(announce, R_ADMIN, "Announce", "Announce your desires to the world.",
 
 	if(!user.holder.check_for_rights(R_SERVER))
 		message = adminscrub(message,500)
-	send_ooc_announcement(message, "From [user.holder.fakekey ? "Administrator" : user.key]")
+	// FENYSHA EDIT CHANGE - AUTOTRANSLATE - ORIGINAL: send_ooc_announcement(message, "From [user.holder.fakekey ? "Administrator" : user.key]")
+	send_ooc_announcement(message, "From [user.holder.fakekey ? "Administrator" : user.key]", author = user)
 	log_admin("Announce: [key_name(user)] : [message]")
 	BLACKBOX_LOG_ADMIN_VERB("Announce")
 

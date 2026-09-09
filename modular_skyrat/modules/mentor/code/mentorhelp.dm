@@ -20,7 +20,8 @@ GAME_VERB(/client, mentorhelp, "Mentorhelp", "Mentor", msg as text)
 		var/client/mentor_client = mentor
 		if(mentor_client)
 			SEND_SOUND(mentor_client, 'sound/items/bikehorn.ogg')
-			to_chat(mentor_client, mentor_msg)
+			// FENYSHA EDIT CHANGE - AUTOTRANSLATE - ORIGINAL: to_chat(mentor_client, mentor_msg)
+			to_chat(mentor_client, translated_line(mentor_client, mentor_msg, msg, src))
 
 	to_chat(src, span_mentor("PM to-<b>Mentors</b>: [msg]"))
 	return

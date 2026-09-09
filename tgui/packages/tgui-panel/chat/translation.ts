@@ -203,6 +203,7 @@ function sweepStalePending(): void {
       pending,
       'No translation arrived in time - showing the original',
       'timeout',
+      false,
     );
   }
 }
@@ -290,7 +291,9 @@ function clearPendingState(
   text: HTMLElement,
   pending: HTMLElement | null,
 ): void {
-  text.classList.remove('tsl-pending-text');
+  // tsl-timeout is cleared too: the line may have been provisionally timed out
+  // by the watchdog and then answered anyway. See markFailed().
+  text.classList.remove('tsl-pending-text', 'tsl-timeout', 'tsl-failed');
   text.removeAttribute('title');
   delete text.dataset.tslSeen;
   retireIds(text, pending);
@@ -304,17 +307,30 @@ function clearPendingState(
  * line that was never up for translation, so failures get their own marker -
  * the player can tell the difference between "this is what they said" and
  * "this is what they said, untranslated, because something broke".
+ *
+ * `retire` says whether the verdict is final. A notice from DM is: it has
+ * spoken about this id and will not speak again. The watchdog's is not - it
+ * only means nothing has arrived *yet*, and a backend having a slow minute
+ * can still answer afterwards. Retiring on a guess is what made slow
+ * translations land in a line that could no longer be found, so the watchdog
+ * stops the dots but leaves the line targetable.
  */
 function markFailed(
   text: HTMLElement,
   pending: HTMLElement | null,
   reason: string,
   kind: 'failed' | 'timeout',
+  retire = true,
 ): void {
   text.classList.remove('tsl-pending-text');
   text.classList.add(kind === 'timeout' ? 'tsl-timeout' : 'tsl-failed');
   text.setAttribute('title', reason);
-  delete text.dataset.tslSeen;
+  // The stamp is kept on a provisional timeout so retireRestoredLines() can
+  // still recognise the line as history next session - without it the id
+  // would survive into a new round and collide with a fresh one.
+  if (retire) {
+    delete text.dataset.tslSeen;
+  }
 
   if (pending) {
     // Reuse the dots node as the marker so the line does not reflow.
@@ -327,7 +343,9 @@ function markFailed(
     pending.setAttribute('title', reason);
   }
 
-  retireIds(text, pending);
+  if (retire) {
+    retireIds(text, pending);
+  }
 }
 
 /**

@@ -29,6 +29,7 @@
 	sender_override = "Server Admin Announcement",
 	encode_title = TRUE,
 	encode_text = FALSE,
+	client/author, // FENYSHA EDIT ADDITION - AUTOTRANSLATE - excluded from translation, they wrote it
 )
 	if(isnull(text))
 		return
@@ -49,11 +50,16 @@
 
 	if(islist(players))
 		for(var/mob/target in players)
-			to_chat(target, finalized_announcement)
+			// FENYSHA EDIT CHANGE - AUTOTRANSLATE - ORIGINAL: to_chat(target, finalized_announcement)
+			to_chat(target, translated_line(target.client, finalized_announcement, text, author))
 			if(play_sound && target.client?.prefs.read_preference(/datum/preference/toggle/sound_announcements))
 				SEND_SOUND(target, sound(sound_override))
 	else
-		to_chat(world, finalized_announcement)
+		// FENYSHA EDIT CHANGE BEGIN - AUTOTRANSLATE - per client, each has their own language
+		for(var/client/listener as anything in GLOB.clients)
+			to_chat(listener, translated_line(listener, finalized_announcement, text, author))
+		// ORIGINAL: to_chat(world, finalized_announcement)
+		// FENYSHA EDIT CHANGE END
 
 		if(!play_sound)
 			return

@@ -8,15 +8,23 @@ ADMIN_VERB_AND_CONTEXT_MENU(cmd_admin_subtle_message, R_ADMIN, "Subtle Message",
 		message_admins("[key_name_admin(user)] decided not to answer [ADMIN_LOOKUPFLW(target)]'s prayer")
 		return
 
+	// FENYSHA EDIT ADDITION - AUTOTRANSLATE
+	var/raw_msg = msg
 	msg = user.reformat_narration(msg)
 
 	target.balloon_alert(target, "you hear a voice")
-	to_chat(target, "<i>You hear a voice in your head... <b>[msg]</i></b>", confidential = TRUE)
+	// FENYSHA EDIT CHANGE - AUTOTRANSLATE - ORIGINAL: to_chat(target, "<i>You hear a voice in your head... <b>[msg]</i></b>", confidential = TRUE)
+	to_chat(target, translated_line(target.client, "<i>You hear a voice in your head... <b>[msg]</i></b>", raw_msg, user), confidential = TRUE)
 
 	log_admin("SubtlePM: [key_name(user)] -> [key_name(target)] : [msg]")
 	msg = span_adminnotice("<b> SubtleMessage: [key_name_admin(user)] -> [key_name_admin(target)] :</b> [msg]")
-	message_admins(msg)
-	admin_ticket_log(target, msg)
+	// FENYSHA EDIT CHANGE BEGIN - AUTOTRANSLATE
+	message_admins(msg, raw_msg, user)
+	admin_ticket_log(target, msg, translatable_body = raw_msg)
+	// ORIGINAL:
+	// message_admins(msg)
+	// admin_ticket_log(target, msg)
+	// FENYSHA EDIT CHANGE END
 	BLACKBOX_LOG_ADMIN_VERB("Subtle Message")
 
 ADMIN_VERB_AND_CONTEXT_MENU(cmd_admin_headset_message, R_ADMIN, "Headset Message", ADMIN_VERB_NO_DESCRIPTION, ADMIN_CATEGORY_HIDDEN, mob/target in world)
@@ -55,12 +63,15 @@ ADMIN_VERB_AND_CONTEXT_MENU(cmd_admin_headset_message, R_ADMIN, "Headset Message
 		message_admins("[key_name_admin(src)] decided not to answer [key_name_admin(target)]'s [sender] request.")
 		return
 
+	// FENYSHA EDIT ADDITION - AUTOTRANSLATE
+	var/raw_input = input
 	input = reformat_narration(input)
 
 	log_directed_talk(mob, target, input, LOG_ADMIN, "reply")
 	message_admins("[key_name_admin(src)] replied to [key_name_admin(target)]'s [sender] message with: \"[input]\"")
 	target.balloon_alert(target, "you hear a voice")
-	to_chat(target, span_hear("You hear something crackle in your [human_recipient ? "ears" : "radio receiver"] for a moment before a voice speaks. \"Please stand by for a message from [sender == "Syndicate" ? "your benefactor" : "Central Command"]. Message as follows[sender == "Syndicate" ? ", agent." : ":"] <b>[input].</b> Message ends.\""), confidential = TRUE)
+	// FENYSHA EDIT CHANGE - AUTOTRANSLATE - ORIGINAL: span_hear("You hear something crackle in your [human_recipient ? "ears" : "radio receiver"] for a moment before a voice speaks. \"Please stand by for a message from [sender == "Syndicate" ? "your benefactor" : "Central Command"]. Message as follows[sender == "Syndicate" ? ", agent." : ":"] <b>[input].</b> Message ends.\"")
+	to_chat(target, translated_line(target.client, span_hear("You hear something crackle in your [human_recipient ? "ears" : "radio receiver"] for a moment before a voice speaks. \"Please stand by for a message from [sender == "Syndicate" ? "your benefactor" : "Central Command"]. Message as follows[sender == "Syndicate" ? ", agent." : ":"] <b>[input].</b> Message ends.\""), raw_input, src), confidential = TRUE)
 
 	BLACKBOX_LOG_ADMIN_VERB("Headset Message")
 
@@ -68,8 +79,13 @@ ADMIN_VERB(cmd_admin_world_narrate, R_ADMIN, "Global Narrate", "Send a direct na
 	var/msg = input(user, "Message:", "Enter the text you wish to appear to everyone:") as text|null
 	if (!msg)
 		return
+	// FENYSHA EDIT CHANGE BEGIN - AUTOTRANSLATE - sent per client, each has their own language
+	var/raw_msg = msg
 	msg = user.reformat_narration(msg)
-	to_chat(world, "[msg]", confidential = TRUE)
+	for(var/client/listener as anything in GLOB.clients)
+		to_chat(listener, "[translated_line(listener, msg, raw_msg, user)]", confidential = TRUE)
+	// ORIGINAL: to_chat(world, "[msg]", confidential = TRUE)
+	// FENYSHA EDIT CHANGE END
 	log_admin("GlobalNarrate: [key_name(user)] : [msg]")
 	message_admins(span_adminnotice("[key_name_admin(user)] Sent a global narrate"))
 	BLACKBOX_LOG_ADMIN_VERB("Global Narrate")
@@ -81,12 +97,19 @@ ADMIN_VERB_AND_CONTEXT_MENU(cmd_admin_local_narrate, R_ADMIN, "Local Narrate", A
 	var/msg = input(user, "Message:", "Enter the text you wish to appear to everyone within view:") as text|null
 	if (!msg)
 		return
+	// FENYSHA EDIT CHANGE BEGIN - AUTOTRANSLATE
+	var/raw_msg = msg
 	msg = user.reformat_narration(msg)
 	for(var/mob/M in view(range, locale))
-		to_chat(M, msg, confidential = TRUE)
+		to_chat(M, translated_line(M.client, msg, raw_msg, user), confidential = TRUE)
+	// ORIGINAL: to_chat(M, msg, confidential = TRUE)
+	// FENYSHA EDIT CHANGE END
 
 	log_admin("LocalNarrate: [key_name(user)] at [AREACOORD(locale)]: [msg]")
-	message_admins(span_adminnotice("<b> LocalNarrate: [key_name_admin(user)] at [ADMIN_VERBOSEJMP(locale)]:</b> [msg]<BR>"))
+	// FENYSHA EDIT CHANGE BEGIN - AUTOTRANSLATE
+	message_admins(span_adminnotice("<b> LocalNarrate: [key_name_admin(user)] at [ADMIN_VERBOSEJMP(locale)]:</b> [msg]<BR>"), raw_msg, user)
+	// ORIGINAL: message_admins(span_adminnotice("<b> LocalNarrate: [key_name_admin(user)] at [ADMIN_VERBOSEJMP(locale)]:</b> [msg]<BR>"))
+	// FENYSHA EDIT CHANGE END
 	BLACKBOX_LOG_ADMIN_VERB("Local Narrate")
 
 ADMIN_VERB_AND_CONTEXT_MENU(cmd_admin_direct_narrate, R_ADMIN, "Direct Narrate", ADMIN_VERB_NO_DESCRIPTION, ADMIN_CATEGORY_HIDDEN, mob/target)
@@ -95,15 +118,22 @@ ADMIN_VERB_AND_CONTEXT_MENU(cmd_admin_direct_narrate, R_ADMIN, "Direct Narrate",
 	if( !msg )
 		return
 
+	var/raw_msg = msg
 	msg = user.reformat_narration(msg)
 
-	// FENYSHA EDIT ADDITION - AUTOTRANSLATE
-	to_chat(target, translated_chat_text(target.client, msg, user), confidential = TRUE)
+	// FENYSHA EDIT CHANGE BEGIN - AUTOTRANSLATE
+	to_chat(target, translated_line(target.client, msg, raw_msg, user), confidential = TRUE)
 	// ORIGINAL: to_chat(target, msg, confidential = TRUE)
+	// FENYSHA EDIT CHANGE END
 	log_admin("DirectNarrate: [key_name(user)] to ([key_name(target)]): [msg]")
 	msg = span_adminnotice("<b> DirectNarrate: [key_name_admin(user)] to ([key_name_admin(target)]):</b> [msg]<BR>")
-	message_admins(msg)
-	admin_ticket_log(target, msg)
+	// FENYSHA EDIT CHANGE BEGIN - AUTOTRANSLATE - the admins watching each read their own language
+	message_admins(msg, raw_msg, user)
+	admin_ticket_log(target, msg, translatable_body = raw_msg)
+	// ORIGINAL:
+	// message_admins(msg)
+	// admin_ticket_log(target, msg)
+	// FENYSHA EDIT CHANGE END
 	BLACKBOX_LOG_ADMIN_VERB("Direct Narrate")
 
 ADMIN_VERB(cmd_admin_add_freeform_ai_law, R_ADMIN, "Add Custom AI Law", "Add a custom law to the Silicons.", ADMIN_CATEGORY_EVENTS)

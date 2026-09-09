@@ -27,7 +27,7 @@
 		else if (!shunted && !client)
 			. += "[src]Core.exe has stopped responding! NTOS is searching for a solution to the problem..."
 	//SKYRAT EDIT ADDITION BEGIN - CUSTOMIZATION
-	. += get_silicon_flavortext()
+	. += get_silicon_flavortext(user) // FENYSHA EDIT CHANGE - AUTOTRANSLATE - ORIGINAL: get_silicon_flavortext()
 	//SKYRAT EDIT ADDITION END
 	. += "</span>"
 

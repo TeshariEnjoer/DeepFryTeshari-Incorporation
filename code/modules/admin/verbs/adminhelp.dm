@@ -625,7 +625,13 @@ GLOBAL_DATUM_INIT(ahelp_tickets, /datum/admin_help_tickets, new)
 	Resolve(silent = TRUE)
 
 //Show the ticket panel
-/datum/admin_help/proc/TicketPanel()
+// FENYSHA EDIT CHANGE - AUTOTRANSLATE - takes the viewer explicitly, because the re-render below
+// runs from a callback where usr is gone. ORIGINAL: /datum/admin_help/proc/TicketPanel()
+/datum/admin_help/proc/TicketPanel(client/viewer, retranslated = FALSE)
+	viewer ||= usr?.client
+	if(isnull(viewer))
+		return
+	// FENYSHA EDIT CHANGE END
 	var/list/dat = list("<html><head><meta name='color-scheme' content='light dark'><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'><title>Ticket #[id]</title></head>") // BUBBER EDIT ADDITION - Add meta color-scheme tag
 	var/ref_src = "[REF(src)]"
 	dat += "<h4>Admin Help Ticket #[id]: [LinkedReplyName(ref_src)]</h4>"
@@ -643,10 +649,10 @@ GLOBAL_DATUM_INIT(ahelp_tickets, /datum/admin_help_tickets, new)
 		dat += "<b>DISCONNECTED</b>[FOURSPACES][ClosureLinks(ref_src)]<br>"
 	dat += "<br><b>Log:</b><br><br>"
 	// FENYSHA EDIT CHANGE - AUTOTRANSLATE - render each entry with its prose translated for
-	// whoever opened the panel. No morph here: this is a browse() window, so it shows finished
-	// text and the Refresh link above picks up anything that was not cached yet.
+	// whoever opened the panel. No morph here: this is a browse() window, so it renders whatever
+	// is already translated and gets re-rendered below once the rest arrives.
 	for(var/index in 1 to length(ticket_interactions))
-		dat += "[translated_panel_line(usr?.client, ticket_interactions[index], LAZYACCESS(interaction_bodies, index))]<br>"
+		dat += "[translated_panel_line(viewer, ticket_interactions[index], LAZYACCESS(interaction_bodies, index))]<br>"
 	// ORIGINAL:
 	// for(var/I in ticket_interactions)
 	// 	dat += "[I]<br>"
@@ -666,7 +672,14 @@ GLOBAL_DATUM_INIT(ahelp_tickets, /datum/admin_help_tickets, new)
 			dat += "[related_ticket.TicketHref("#[related_ticket.id]")] ([related_ticket.ticket_status()]): [related_ticket.name]<br/>"
 	dat += "</html>"
 
-	usr << browse(dat.Join(), "window=ahelp[id];size=750x480")
+	viewer << browse(dat.Join(), "window=ahelp[id];size=750x480") // FENYSHA EDIT CHANGE - AUTOTRANSLATE - ORIGINAL: usr << browse(...)
+
+	// FENYSHA EDIT ADDITION BEGIN - AUTOTRANSLATE
+	// browse() cannot update itself, so anything not cached yet is drawn untranslated. Re-render
+	// once when it lands; retranslated guards against looping if a fragment never resolves.
+	if(!retranslated)
+		translation_prewarm(viewer, interaction_bodies, CALLBACK(src, PROC_REF(TicketPanel), viewer, TRUE))
+	// FENYSHA EDIT ADDITION END
 
 /**
  * Renders the current status of the ticket into a displayable string
@@ -742,7 +755,12 @@ GLOBAL_DATUM_INIT(ahelp_tickets, /datum/admin_help_tickets, new)
 			convert_to_mentorhelp()
 		// SKYRAT EDIT ADDITION END
 
-/datum/admin_help/proc/player_ticket_panel()
+// FENYSHA EDIT CHANGE - AUTOTRANSLATE - ORIGINAL: /datum/admin_help/proc/player_ticket_panel()
+/datum/admin_help/proc/player_ticket_panel(client/viewer, retranslated = FALSE)
+	viewer ||= usr?.client
+	if(isnull(viewer))
+		return
+	// FENYSHA EDIT CHANGE END
 	var/list/dat = list("<html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'><title>Player Ticket</title></head>")
 	dat += "<b>State: "
 	switch(state)
@@ -762,15 +780,22 @@ GLOBAL_DATUM_INIT(ahelp_tickets, /datum/admin_help_tickets, new)
 	dat += "<br><b>Log:</b><br><br>"
 	// FENYSHA EDIT CHANGE - AUTOTRANSLATE
 	for (var/index in 1 to length(player_interactions))
-		dat += "[translated_panel_line(usr?.client, player_interactions[index], LAZYACCESS(player_interaction_bodies, index))]<br>"
+		dat += "[translated_panel_line(viewer, player_interactions[index], LAZYACCESS(player_interaction_bodies, index))]<br>"
 	// ORIGINAL:
 	// for (var/interaction in player_interactions)
 	// 	dat += "[interaction]<br>"
 	// FENYSHA EDIT CHANGE END
 
-	var/datum/browser/player_panel = new(usr, "ahelp[id]", 0, 620, 480)
+	if(isnull(viewer.mob))
+		return
+	var/datum/browser/player_panel = new(viewer.mob, "ahelp[id]", 0, 620, 480) // FENYSHA EDIT CHANGE - AUTOTRANSLATE - ORIGINAL: new(usr, ...)
 	player_panel.set_content(dat.Join())
 	player_panel.open()
+
+	// FENYSHA EDIT ADDITION BEGIN - AUTOTRANSLATE - see TicketPanel()
+	if(!retranslated)
+		translation_prewarm(viewer, player_interaction_bodies, CALLBACK(src, PROC_REF(player_ticket_panel), viewer, TRUE))
+	// FENYSHA EDIT ADDITION END
 
 
 //

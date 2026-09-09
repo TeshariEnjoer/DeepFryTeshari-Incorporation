@@ -172,7 +172,8 @@ ADMIN_VERB(reset_ooc_color, R_FUN, "Reset Player OOC Color", "Returns player OOC
 //Checks admin notice
 GAME_VERB_DESC(/client, admin_notice, "Adminnotice", "Check the admin notice if it has been set", "Admin")
 	if(GLOB.admin_notice)
-		to_chat(src, "[span_boldnotice("Admin Notice:")]\n \t [GLOB.admin_notice]")
+		// FENYSHA EDIT CHANGE - AUTOTRANSLATE - ORIGINAL: to_chat(src, "[span_boldnotice("Admin Notice:")]\n \t [GLOB.admin_notice]")
+		to_chat(src, translated_line(src, "[span_boldnotice("Admin Notice:")]\n \t [GLOB.admin_notice]", GLOB.admin_notice))
 	else
 		to_chat(src, span_notice("There are no admin notices at the moment."))
 

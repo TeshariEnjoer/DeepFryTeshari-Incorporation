@@ -32,7 +32,7 @@
 	/// When TRUE, turf-to-turf gas simulation is disabled (see file header).
 	/// Defaults to FALSE so vanilla atmospherics runs unless explicitly toggled,
 	/// e.g. SSair.disable_turf_processing = TRUE.
-	var/disable_turf_processing = TRUE
+	var/disable_turf_processing = FALSE
 
 /// Never enroll a turf into active processing while disabled. See file header.
 /datum/controller/subsystem/air/add_to_active(turf/open/activate, blockchanges = FALSE)

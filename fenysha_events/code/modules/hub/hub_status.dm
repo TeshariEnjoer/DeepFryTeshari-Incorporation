@@ -1,8 +1,9 @@
 /// The BYOND hub entry. Supersedes the tagline module, which is commented out of tgstation.dme
-/// because both define update_status(). The hub renders little more than <b>, <i>, <br>,
-/// <font color> and <a href>, and truncates past about five lines.
+/// because both define update_status(). The hub cuts the entry off mid-tag somewhere past 250
+/// characters, so the optional lines are only added when there is room left for them.
 
-#define HUB_LEADER " <font color='#5c5c5c'>...</font> "
+#define HUB_STATUS_LIMIT 250
+#define HUB_LEADER " ... "
 
 /datum/config_entry/string/wiki_link
 
@@ -10,49 +11,61 @@
 
 	var/list/manifest = list()
 
-	var/new_status = ""
-	var/hostedby
-	if(config)
-		var/server_name = CONFIG_GET(string/servername)
-		if(server_name)
-			new_status += "<b>[server_name]</b>"
-		new_status += " <font color='#7a7a7a'>&#8212; tartarus engine</font><br>"
-		new_status += "<i><font color='#8a8a8a'>[CONFIG_GET(string/servertagline)]</font></i><br>"
-		hostedby = CONFIG_GET(string/hostedby)
-
 	if(SSmapping.current_map)
-		manifest += "<font color='#6e6e6e'>sector</font> [lowertext(SSmapping.current_map.map_name)]"
+		manifest += "sector [lowertext(SSmapping.current_map.map_name)]"
 
 	var/players = GLOB.clients.len
 	var/popcap = CONFIG_GET(number/extreme_popcap)
 	// Tells the hub we are full.
 	game_state = (popcap && players >= popcap)
 
-	var/subjects = "<font color='#6e6e6e'>subjects</font> [add_leading("[players]", 3, "0")][popcap ? "/[add_leading("[popcap]", 3, "0")]" : ""]"
+	var/subjects = "subjects [add_leading("[players]", 3, "0")]"
+	if(popcap)
+		subjects += "/[popcap]"
 	if(LAZYACCESS(SSlag_switch.measures, DISABLE_NON_OBSJOBS))
-		subjects += " <font color='#b03a2e'>(sealed)</font>"
+		subjects += " (sealed)"
 	else if(game_state)
-		subjects += " <font color='#b03a2e'>(at capacity)</font>"
+		subjects += " (at capacity)"
 	manifest += subjects
 
-	manifest += "<font color='#6e6e6e'>cycle</font> [get_cycle_state()]"
+	manifest += "cycle [get_cycle_state()]"
 
+	var/hostedby = CONFIG_GET(string/hostedby)
 	if(!host && hostedby)
-		manifest += "<font color='#6e6e6e'>operator</font> [hostedby]"
+		manifest += "operator [hostedby]"
 
-	new_status += "[jointext(manifest, HUB_LEADER)]<br>"
+	var/name_line = "<b>[CONFIG_GET(string/servername)]</b>"
+	var/manifest_line = jointext(manifest, HUB_LEADER)
+	var/links_line = "<a href=\"[CONFIG_GET(string/discord_link)]\">discord</a> / <a href=\"[CONFIG_GET(string/wiki_link)]\">archive</a>"
 
+	// What is left once the three lines that always ship, and their <br>s, are paid for.
+	var/budget = HUB_STATUS_LIMIT - length(name_line) - length(manifest_line) - length(links_line) - 8
+
+	var/candidate
+	var/trial_line
 	if(SSround_events?.active_event)
 		var/datum/full_round_event/event = SSround_events.active_event
-		new_status += "<font color='#6e6e6e'>trial</font>[HUB_LEADER]<b><font color='#d9a441'>[lowertext(event.hub_name || event.name)]</font></b><br>"
+		candidate = "trial[HUB_LEADER][lowertext(event.hub_name || event.name)]"
+		if(length(candidate) + 4 <= budget)
+			trial_line = candidate
+			budget -= length(candidate) + 4
 
-	new_status += "<a href=\"[CONFIG_GET(string/discord_link)]\"><font color='#7b86c4'>DISCORD</font></a> <font color='#5c5c5c'>//</font> <a href=\"[CONFIG_GET(string/wiki_link)]\"><font color='#b8a06a'>ARCHIVE</font></a>"
+	var/tagline_line
+	var/tagline = CONFIG_GET(string/servertagline)
+	if(tagline)
+		candidate = "<i>[tagline]</i>"
+		if(length(candidate) + 4 <= budget)
+			tagline_line = candidate
 
-	status = new_status
+	var/list/lines = list(name_line)
+	if(tagline_line)
+		lines += tagline_line
+	lines += manifest_line
+	if(trial_line)
+		lines += trial_line
+	lines += links_line
 
-	// The cycle line is a live clock and nothing else refreshes between logins.
-	if(SStimer)
-		addtimer(CALLBACK(src, PROC_REF(update_status)), 1 MINUTES, TIMER_UNIQUE|TIMER_OVERRIDE)
+	status = jointext(lines, "<br>")
 
 /world/proc/get_cycle_state()
 	if(!SSticker || SSticker.current_state == GAME_STATE_STARTUP)
@@ -66,7 +79,8 @@
 	if(!SSticker.IsRoundInProgress())
 		return "standby"
 	if(SSshuttle?.emergency && !(SSshuttle.emergency.mode in list(SHUTTLE_IDLE, SHUTTLE_ENDGAME)))
-		return "<font color='#d08020'>extraction [SSshuttle.emergency.getTimerStr()]</font>"
+		return "extraction [SSshuttle.emergency.getTimerStr()]"
 	return "t+[round_timestamp("hh:mm")]"
 
 #undef HUB_LEADER
+#undef HUB_STATUS_LIMIT

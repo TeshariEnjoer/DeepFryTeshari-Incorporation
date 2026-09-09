@@ -39,11 +39,15 @@ GAME_VERB(/mob, pray, VERB_PRAY, null, message as text)
 
 	var/msg_tmp = message
 	GLOB.requests.pray(src.client, message, src.job == JOB_CHAPLAIN)
-	message = span_adminnotice("[icon2html(cross, GLOB.admins)]<b><font color=[GLOB.prayer_type_to_font_color[prayer_type]]>[prayer_type][length(deities) ? " (to [english_list(deities)])" : ""]: </font>[ADMIN_FULLMONTY(src)] [ADMIN_SC(src)]:</b> [span_linkify(message)]")
+	// FENYSHA EDIT ADDITION - AUTOTRANSLATE - held apart so only the prayer itself is translated
+	var/prayer_body = span_linkify(message)
+	// ORIGINAL: message = span_adminnotice("[icon2html(cross, GLOB.admins)]<b><font color=[GLOB.prayer_type_to_font_color[prayer_type]]>[prayer_type][length(deities) ? " (to [english_list(deities)])" : ""]: </font>[ADMIN_FULLMONTY(src)] [ADMIN_SC(src)]:</b> [span_linkify(message)]")
+	message = span_adminnotice("[icon2html(cross, GLOB.admins)]<b><font color=[GLOB.prayer_type_to_font_color[prayer_type]]>[prayer_type][length(deities) ? " (to [english_list(deities)])" : ""]: </font>[ADMIN_FULLMONTY(src)] [ADMIN_SC(src)]:</b> [prayer_body]")
 	message = custom_boxed_message(GLOB.prayer_type_to_message_box[prayer_type], message)
 	for(var/client/C in GLOB.admins)
 		if(get_chat_toggles(C) & CHAT_PRAYER)
-			to_chat(C, message, type = MESSAGE_TYPE_PRAYER, confidential = TRUE)
+			// FENYSHA EDIT CHANGE - AUTOTRANSLATE - ORIGINAL: to_chat(C, message, type = MESSAGE_TYPE_PRAYER, confidential = TRUE)
+			to_chat(C, translated_line(C, message, prayer_body, src.client), type = MESSAGE_TYPE_PRAYER, confidential = TRUE)
 	to_chat(src, span_info("You pray to the gods: \"[msg_tmp]\""), confidential = TRUE)
 
 	BLACKBOX_LOG_ADMIN_VERB("Prayer")
@@ -53,11 +57,16 @@ GAME_VERB(/mob, pray, VERB_PRAY, null, message as text)
 /proc/message_centcom(text, mob/sender)
 	var/msg = copytext_char(sanitize(text), 1, MAX_MESSAGE_LEN)
 	GLOB.requests.message_centcom(sender.client, msg)
+	// FENYSHA EDIT ADDITION - AUTOTRANSLATE
+	var/raw_msg = msg
 	msg = span_adminnotice("<b><font color=orange>CENTCOM:</font>[ADMIN_FULLMONTY(sender)] [ADMIN_CENTCOM_REPLY(sender)]:</b> [msg]")
 	for(var/client/staff as anything in GLOB.admins)
 		if(staff?.prefs.read_preference(/datum/preference/toggle/comms_notification))
 			SEND_SOUND(staff, sound('sound/misc/server-ready.ogg'))
-	to_chat(GLOB.admins, msg, type = MESSAGE_TYPE_PRAYER, confidential = TRUE)
+		// FENYSHA EDIT CHANGE BEGIN - AUTOTRANSLATE - folded into this loop, each admin has their own language
+		to_chat(staff, translated_line(staff, msg, raw_msg, sender?.client), type = MESSAGE_TYPE_PRAYER, confidential = TRUE)
+	// ORIGINAL: to_chat(GLOB.admins, msg, type = MESSAGE_TYPE_PRAYER, confidential = TRUE)
+	// FENYSHA EDIT CHANGE END
 	for(var/obj/machinery/computer/communications/console in GLOB.shuttle_caller_list)
 		console.override_cooldown()
 
@@ -65,11 +74,16 @@ GAME_VERB(/mob, pray, VERB_PRAY, null, message as text)
 /proc/message_syndicate(text, mob/sender)
 	var/msg = copytext_char(sanitize(text), 1, MAX_MESSAGE_LEN)
 	GLOB.requests.message_syndicate(sender.client, msg)
+	// FENYSHA EDIT ADDITION - AUTOTRANSLATE
+	var/raw_msg = msg
 	msg = span_adminnotice("<b><font color=crimson>SYNDICATE:</font>[ADMIN_FULLMONTY(sender)] [ADMIN_SYNDICATE_REPLY(sender)]:</b> [msg]")
 	for(var/client/staff as anything in GLOB.admins)
 		if(staff?.prefs.read_preference(/datum/preference/toggle/comms_notification))
 			SEND_SOUND(staff, sound('sound/misc/server-ready.ogg'))
-	to_chat(GLOB.admins, msg, type = MESSAGE_TYPE_PRAYER, confidential = TRUE)
+		// FENYSHA EDIT CHANGE BEGIN - AUTOTRANSLATE - folded into this loop, each admin has their own language
+		to_chat(staff, translated_line(staff, msg, raw_msg, sender?.client), type = MESSAGE_TYPE_PRAYER, confidential = TRUE)
+	// ORIGINAL: to_chat(GLOB.admins, msg, type = MESSAGE_TYPE_PRAYER, confidential = TRUE)
+	// FENYSHA EDIT CHANGE END
 	for(var/obj/machinery/computer/communications/console in GLOB.shuttle_caller_list)
 		console.override_cooldown()
 
@@ -77,9 +91,14 @@ GAME_VERB(/mob, pray, VERB_PRAY, null, message as text)
 /proc/nuke_request(text, mob/sender)
 	var/msg = copytext_char(sanitize(text), 1, MAX_MESSAGE_LEN)
 	GLOB.requests.nuke_request(sender.client, msg)
+	// FENYSHA EDIT ADDITION - AUTOTRANSLATE
+	var/raw_msg = msg
 	msg = span_adminnotice("<b><font color=orange>NUKE CODE REQUEST:</font>[ADMIN_FULLMONTY(sender)] [ADMIN_CENTCOM_REPLY(sender)] [ADMIN_SET_SD_CODE]:</b> [msg]")
 	for(var/client/staff as anything in GLOB.admins)
 		SEND_SOUND(staff, sound('sound/misc/server-ready.ogg'))
-	to_chat(GLOB.admins, msg, type = MESSAGE_TYPE_PRAYER, confidential = TRUE)
+		// FENYSHA EDIT CHANGE BEGIN - AUTOTRANSLATE - folded into this loop, each admin has their own language
+		to_chat(staff, translated_line(staff, msg, raw_msg, sender?.client), type = MESSAGE_TYPE_PRAYER, confidential = TRUE)
+	// ORIGINAL: to_chat(GLOB.admins, msg, type = MESSAGE_TYPE_PRAYER, confidential = TRUE)
+	// FENYSHA EDIT CHANGE END
 	for(var/obj/machinery/computer/communications/console in GLOB.shuttle_caller_list)
 		console.override_cooldown()

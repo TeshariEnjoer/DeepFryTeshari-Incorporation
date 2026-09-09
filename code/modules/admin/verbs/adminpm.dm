@@ -389,7 +389,10 @@ ADMIN_VERB(cmd_admin_pm_panel, R_NONE, "Admin PM", "Show a list of clients to PM
 
 		recipient.receive_ahelp(
 			link_to_us,
-			span_linkify(send_message),
+			// FENYSHA EDIT CHANGE - AUTOTRANSLATE
+			// ORIGINAL: span_linkify(send_message),
+			translated_chat_text(recipient, span_linkify(send_message), src),
+			// FENYSHA EDIT CHANGE END
 		)
 
 		to_chat(src,
@@ -400,7 +403,10 @@ ADMIN_VERB(cmd_admin_pm_panel, R_NONE, "Admin PM", "Show a list of clients to PM
 		admin_ticket_log(recipient,
 			"<font color='purple'>PM From [name_key_with_link]: [keyword_parsed_msg]</font>",
 			log_in_blackbox = FALSE,
-			player_message = "<font color='purple'>PM From [link_to_us]: [send_message]</font>")
+			player_message = "<font color='purple'>PM From [link_to_us]: [send_message]</font>",
+			// FENYSHA EDIT ADDITION - AUTOTRANSLATE - the two lines embed different renderings
+			translatable_body = keyword_parsed_msg,
+			player_translatable_body = send_message)
 
 		if(!already_logged) //Reply to an existing ticket
 			SSblackbox.LogAhelp(recipient_ticket_id, "Reply", send_message, recip_ckey, our_ckey)
@@ -482,7 +488,10 @@ ADMIN_VERB(cmd_admin_pm_panel, R_NONE, "Admin PM", "Show a list of clients to PM
 			admin_ticket_log(recipient,
 				interaction_message,
 				log_in_blackbox = FALSE,
-				player_message = player_interaction_message)
+				player_message = player_interaction_message,
+				// FENYSHA EDIT ADDITION - AUTOTRANSLATE
+				translatable_body = keyword_parsed_msg,
+				player_translatable_body = send_message)
 
 		SSblackbox.LogAhelp(ticket_id, "Reply", send_message, recip_ckey, our_ckey)
 		return TRUE

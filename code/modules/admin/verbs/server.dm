@@ -245,7 +245,11 @@ ADMIN_VERB(set_admin_notice, R_SERVER, "Set Admin Notice", "Set an announcement 
 	else
 		message_admins("[key_name(user)] set the admin notice.")
 		log_admin("[key_name(user)] set the admin notice:\n[new_admin_notice]")
-		to_chat(world, span_adminnotice("<b>Admin Notice:</b>\n \t [new_admin_notice]"), confidential = TRUE)
+		// FENYSHA EDIT CHANGE BEGIN - AUTOTRANSLATE - per client, each has their own language
+		for(var/client/listener as anything in GLOB.clients)
+			to_chat(listener, translated_line(listener, span_adminnotice("<b>Admin Notice:</b>\n \t [new_admin_notice]"), new_admin_notice, user), confidential = TRUE)
+		// ORIGINAL: to_chat(world, span_adminnotice("<b>Admin Notice:</b>\n \t [new_admin_notice]"), confidential = TRUE)
+		// FENYSHA EDIT CHANGE END
 	BLACKBOX_LOG_ADMIN_VERB("Set Admin Notice")
 	GLOB.admin_notice = new_admin_notice
 
