@@ -366,7 +366,6 @@ MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/button/auto_detect, 24)
 	resistance_flags = INDESTRUCTIBLE | LAVA_PROOF | FIRE_PROOF | ACID_PROOF
 
 /obj/item/paper/trainstation_password/Initialize(mapload)
-	. = ..()
 	var/datum/train_station/current_station = SStrain_controller?.loaded_station
 	if(current_station)
 		name = "[current_station.name] - security update"
@@ -377,6 +376,7 @@ MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/button/auto_detect, 24)
 
 	set_light(3, 2, "#00e1ff")
 	apply_noticeable_filters()
+	. = ..()
 
 /obj/item/paper/trainstation_password/proc/apply_noticeable_filters()
 	add_filter("security_outline", 1, list("type" = "outline", "size" = 1, "color" = "#00ffff"))

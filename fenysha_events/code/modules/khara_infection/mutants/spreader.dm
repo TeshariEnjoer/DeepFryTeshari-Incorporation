@@ -50,6 +50,8 @@
 		/datum/action/cooldown/mob_cooldown/boss_bone_shard = BB_MOB_ABILITY_BONESHARD,
 		/datum/action/cooldown/mob_cooldown/throw_spider = BB_MOB_ABILITY_MEAT_BALL,
 		/datum/action/cooldown/mob_cooldown/rumble = BB_MOB_ABILITY_RUMBLE,
+		/datum/action/cooldown/mob_cooldown/artillery = BB_MOB_ABILITY_ARTILERY,
+		/datum/action/cooldown/mob_cooldown/khara_fog/extreme = BB_MOB_ABILITY_FOGBALL,
 	)
 
 
