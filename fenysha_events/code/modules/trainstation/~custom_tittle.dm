@@ -144,6 +144,7 @@ img.bg {
     border: 2px solid transparent;
     background: transparent;
     image-rendering: crisp-edges;
+    text-decoration: none;
 }
 
 .menu_button:hover {

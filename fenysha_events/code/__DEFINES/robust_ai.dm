@@ -9,6 +9,7 @@
 #define BB_BASIC_MOB_MOVE_TARGET "basic_mob_move_target"
 #define BB_BASIC_MOB_PATROL_POINTS "basic_mob_patrol_points"
 #define BB_BASIC_MOB_PATROL_INDEX "basic_mob_patrol_index"
+#define BB_BASIC_MOB_OVERRIDE_VISION_RANGE "!override_vision_range"
 
 #define BB_BASIC_MOB_PATROL_ANCHOR "basic_mob_patrol_anchor"
 #define BB_BASIC_MOB_CAN_USE_PATROL_POINTS "!can_use_patrol_points"

@@ -17,6 +17,9 @@
 #define BB_MOB_ABILITY_CRUSH_WAVE "bb_ability_crush_wave"
 #define BB_MOB_ABILITY_CRUSH_MECH "bb_ability_crush_mech"
 #define BB_MOB_ABILITY_CONSUME "bb_ability_consume"
+#define BB_MOB_ABILITY_ARTILERY "bb_mob_ability_artilery"
+#define BB_MOB_ABILITY_FOGBALL "bb_mob_ablity_fogball"
+#define BB_MOB_ABILITY_ZIGZAG_CHARGE "bb_mob_ablity_zigzag_charge"
 
 #define BB_NPC_PATROL_POINT "bb_npc_patrol_point"
 #define BB_BASIC_MOB_CUFF_TYPE "bb_cuff_type"

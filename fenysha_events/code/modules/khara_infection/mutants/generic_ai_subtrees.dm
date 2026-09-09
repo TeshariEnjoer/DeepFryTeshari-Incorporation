@@ -25,11 +25,6 @@
 	max_range = 1
 	finish_planning = FALSE
 
-/datum/ai_planning_subtree/targeted_mob_ability/check_range/charge
-	ability_key = BB_MOB_ABILITY_FAST_CHARGE
-	min_range = 3
-	finish_planning = FALSE
-
 /datum/ai_planning_subtree/targeted_mob_ability/check_range/crushing_charge
 	ability_key = BB_MOB_ABILITY_CRUSH_CHARGE
 	min_range = 3

@@ -9,7 +9,7 @@
 
 /datum/ai_planning_subtree/targeted_mob_ability/check_range
 	var/min_range = 0
-	var/max_range = 10
+	var/max_range = 30
 
 /datum/ai_planning_subtree/targeted_mob_ability/check_range/SelectBehaviors(datum/ai_controller/controller, seconds_per_tick)
 	var/atom/target = controller.blackboard[target_key]

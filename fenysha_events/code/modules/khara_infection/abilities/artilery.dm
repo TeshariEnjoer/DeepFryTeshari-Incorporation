@@ -7,6 +7,11 @@
 #define ARTILLERY_DIRECT_DAMAGE 60
 #define ARTILLERY_AOE_DAMAGE 30
 
+/datum/ai_planning_subtree/targeted_mob_ability/check_range/artilery
+	ability_key = BB_MOB_ABILITY_ARTILERY
+	min_range = 3
+	finish_planning = TRUE
+
 /obj/projectile/mutant_artillery
 	name = "blood artillery shell"
 	icon_state = "blastwave"
@@ -157,8 +162,24 @@
 	var/shot_delay = 0.3 SECONDS
 	/// Additional accuracy penalty for multiple shots.
 	/// Higher values make large barrages less accurate.
-	var/spread_per_extra_shot = 1.0
+	var/spread_per_extra_shot = 0.5
 
+	var/min_range = 3
+	var/max_distance = 20
+
+/datum/action/cooldown/mob_cooldown/artillery/PreActivate(atom/target)
+	if(get_dist(target, owner) < min_range)
+		owner.balloon_alert(owner, "To close!")
+		return FALSE
+	var/area/own_area = get_area(owner)
+	var/area/target_area = get_area(target)
+	if(target_area.outdoors != own_area.outdoors)
+		owner.balloon_alert(owner, "Can't shoot here!")
+		return FALSE
+	if(!can_see(owner, target, max_distance))
+		owner.balloon_alert(owner, "Can't shoot here!")
+		return FALSE
+	return ..()
 
 /datum/action/cooldown/mob_cooldown/artillery/Activate(atom/target)
 	target = get_turf(target)
@@ -175,7 +196,7 @@
 	if(shots <= 1)
 		return base_spread
 
-	return base_spread + ((shots - 1) * spread_per_extra_shot)
+	return round(base_spread + ((shots - 1) * spread_per_extra_shot))
 
 
 /datum/action/cooldown/mob_cooldown/artillery/proc/get_impact_turf(turf/target)
@@ -220,3 +241,7 @@
 
 		if(i < shots)
 			sleep(shot_delay)
+
+
+/datum/action/cooldown/mob_cooldown/artillery/multi
+	shots = 8

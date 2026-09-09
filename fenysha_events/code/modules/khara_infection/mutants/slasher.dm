@@ -2,10 +2,10 @@
 	name = "Flesh Humanoid"
 	desc = "A terrifying humanoid creature that was clearly a human until recently. Its whole body trembles, bending unnaturally, \
 			while four appendages on its back undulate rapidly."
-	icon = 'fenysha_events/icons/mob/horror.dmi'
-	icon_state = "khara_creature"
-	icon_living = "khara_creature"
-	icon_dead = "khara_creature"
+	icon = 'fenysha_events/icons/mob/48x48.dmi'
+	icon_state = "khara_slasher"
+	icon_living = "khara_slasher"
+	icon_dead = "khara_slasher"
 	speak_emote = list("writhes")
 	response_help_continuous = "pets"
 	response_help_simple = "pet"
@@ -22,13 +22,16 @@
 	shock_stun_cooldown = 2 SECONDS
 	regeneration_delay = 7 SECONDS
 
+	pixel_x = -12
+	base_pixel_x = -12
+
 	speed = 0
-	health = 150
-	maxHealth = 150
+	health = 250
+	maxHealth = 250
 	spread_blood_radius = 1
 	minimum_melee_damage_treshold = 15
 
-	var/evade_cooldown = 1.5 SECONDS
+	var/evade_cooldown = 0.8 SECONDS
 	var/evade_steps = 1
 	var/evade_chance = 80
 

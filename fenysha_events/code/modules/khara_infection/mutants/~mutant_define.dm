@@ -329,14 +329,14 @@
 		return
 	add_filter(KHARA_REGEN_FILTER, 2, list("type" = "outline", "color" = regen_outline_colour, "alpha" = 0, "size" = 1))
 	var/filter = get_filter(KHARA_REGEN_FILTER)
-	animate(filter, alpha = 200, time = 0.5 SECONDS, loop = -1)
+	animate(filter, alpha = 200, time = 0.5 SECONDS, loop = -1, flags = ANIMATION_PARALLEL)
 	animate(alpha = 0, time = 0.5 SECONDS)
 
 /mob/living/basic/khara_mutant/proc/stop_regenerating()
 	is_regenerating = FALSE
 	var/filter = get_filter(KHARA_REGEN_FILTER)
 	if(filter)
-		animate(filter)
+		animate(filter, flags = ANIMATION_PARALLEL)
 		remove_filter(KHARA_REGEN_FILTER)
 
 /mob/living/basic/khara_mutant/Life(seconds_per_tick, times_fired)

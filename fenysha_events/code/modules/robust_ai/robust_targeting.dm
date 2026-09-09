@@ -272,17 +272,21 @@
 
 	var/atom/current_target = controller.blackboard[target_key]
 
+	// Use the mob-specific vision override when present.
+	var/aggro_range = isnull(controller.blackboard[BB_BASIC_MOB_OVERRIDE_VISION_RANGE]) ? vision_range : controller.blackboard[BB_BASIC_MOB_OVERRIDE_VISION_RANGE]
 	// Keep the current target until the refresh cooldown expires.
 	// A target which is no longer attackable is immediately discarded.
-	if( \
-		controller.blackboard[BB_BASIC_MOB_TARGET_REFRESH_COOLDOWN] > world.time \
+	if(controller.blackboard[BB_BASIC_MOB_TARGET_REFRESH_COOLDOWN] > world.time \
 		&& current_target \
-		&& targeting_strategy.can_attack(living_mob, current_target, vision_range) \
+		&& targeting_strategy.can_attack(
+			living_mob,
+			current_target,
+			aggro_range
+		)
 	)
 		return AI_BEHAVIOR_DELAY | AI_BEHAVIOR_FAILED
 
-	var/aggro_range = vision_range
-
+	// Override aggro range when explicitly configured.
 	if(isnull(current_target) && !isnull(controller.blackboard[aggro_grab_range_key]))
 		aggro_range = controller.blackboard[aggro_grab_range_key]
 	else if(!isnull(controller.blackboard[aggro_range_key]))
@@ -304,7 +308,11 @@
 
 	if(mob_turf?.z)
 		for(var/atom/hostile_machine as anything in GLOB.hostile_machines_by_z[mob_turf.z])
-			if(can_see(living_mob, hostile_machine, aggro_range))
+			if(can_see(
+				living_mob,
+				hostile_machine,
+				aggro_range
+			))
 				potential_targets += hostile_machine
 
 	if(!potential_targets.len)
@@ -318,18 +326,15 @@
 
 		return AI_BEHAVIOR_DELAY | AI_BEHAVIOR_FAILED
 
-	// Filter ONLY by whether the target can actually be attacked.
-	//
-	// Unlike the standard behavior, we deliberately do not compare the
-	// candidate with the current target's priority here.
-
+	// Filter only by whether the target can actually be attacked.
+	// Do not compare priorities here; the priority strategy handles that.
 	var/list/filtered_targets = list()
 
 	for(var/atom/pot_target in potential_targets)
 		if(!targeting_strategy.can_attack(
 			living_mob,
 			pot_target,
-			vision_range
+			aggro_range
 		))
 			continue
 
@@ -347,7 +352,6 @@
 		return AI_BEHAVIOR_DELAY | AI_BEHAVIOR_FAILED
 
 	// Let the priority strategy make the actual decision.
-
 	var/atom/target = pick_final_target(
 		controller,
 		filtered_targets
@@ -386,10 +390,35 @@
 		controller.set_blackboard_key(
 			hiding_location_key,
 			potential_hiding_location
-	)
+		)
 
 	return AI_BEHAVIOR_DELAY | AI_BEHAVIOR_SUCCEEDED
 
+
+/datum/ai_behavior/find_potential_targets/weighted/failed_to_find_anyone(datum/ai_controller/controller, target_key, targeting_strategy_key, hiding_location_key)
+	var/aggro_range = isnull(controller.blackboard[BB_BASIC_MOB_OVERRIDE_VISION_RANGE]) ? vision_range : controller.blackboard[BB_BASIC_MOB_OVERRIDE_VISION_RANGE]
+	if(!isnull(controller.blackboard[aggro_grab_range_key]))
+		aggro_range = controller.blackboard[aggro_grab_range_key]
+	else if(!isnull(controller.blackboard[aggro_range_key]))
+		aggro_range = controller.blackboard[aggro_range_key]
+
+	// takes the larger between our range() input and our implicit hearers() input (world.view)
+	aggro_range = max(aggro_range, ROUND_UP(max(getviewsize(world.view)) / 2))
+	// Alright, here's the interesting bit
+	// We're gonna use this max range to hook into a proximity field so we can just await someone interesting to come along
+	// Rather then trying to check every few seconds
+	var/datum/proximity_monitor/advanced/ai_target_tracking/detection_field = new(
+		controller.pawn,
+		aggro_range,
+		TRUE,
+		src,
+		controller,
+		target_key,
+		targeting_strategy_key,
+		hiding_location_key,
+	)
+	// We're gonna store this field in our blackboard, so we can clear it away if we end up finishing successsfully
+	controller.set_blackboard_key(BB_FIND_TARGETS_FIELD(type), detection_field)
 
 /datum/ai_behavior/find_potential_targets/weighted/pick_final_target(
 	datum/ai_controller/controller,
@@ -404,6 +433,7 @@
 		controller,
 		filtered_targets
 	)
+
 
 /datum/ai_planning_subtree/weighted_find_target
 
