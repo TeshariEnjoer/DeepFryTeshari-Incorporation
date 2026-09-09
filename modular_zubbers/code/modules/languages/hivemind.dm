@@ -44,7 +44,7 @@
 		var/obj/item/organ/brain/xeno_hybrid/brain = living_mob.get_organ_slot(ORGAN_SLOT_BRAIN)
 		if(!istype(brain))
 			continue
-		to_chat(living_mob, rendered)
+		to_chat(living_mob, translated_line(living_mob.client, rendered, message, user.client)) // FENYSHA EDIT - AUTOTRANSLATE
 		if(living_mob != user)
 			living_mob.balloon_alert_to_viewers("Looks distracted...", "A voice murmurs in your head...")
 
@@ -52,4 +52,4 @@
 		for(var/mob/dead_mob in GLOB.dead_mob_list)
 			if(dead_mob.client)
 				var/link = FOLLOW_LINK(dead_mob, user)
-				to_chat(dead_mob, "[link] [rendered]")
+				to_chat(dead_mob, "[link] [translated_line(dead_mob.client, rendered, message, user.client)]") // FENYSHA EDIT - AUTOTRANSLATE

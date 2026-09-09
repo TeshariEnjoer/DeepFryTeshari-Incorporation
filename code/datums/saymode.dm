@@ -75,11 +75,14 @@
 	var/msg = span_changeling("<b>[id]:</b> [message]")
 
 	// Send the message to our other changelings.
+	// FENYSHA EDIT CHANGE BEGIN - AUTOTRANSLATE
 	for(var/mob/ling_mob as anything in get_lings())
-		to_chat(ling_mob, msg, type = MESSAGE_TYPE_RADIO, avoid_highlighting = ling_mob == user)
+		to_chat(ling_mob, translated_line(ling_mob.client, msg, message, user.client), type = MESSAGE_TYPE_RADIO, avoid_highlighting = ling_mob == user)
 
 	for(var/mob/dead/ghost as anything in GLOB.dead_mob_list)
-		to_chat(ghost, "[FOLLOW_LINK(ghost, user)] [msg]", type = MESSAGE_TYPE_RADIO)
+		to_chat(ghost, "[FOLLOW_LINK(ghost, user)] [translated_line(ghost.client, msg, message, user.client)]", type = MESSAGE_TYPE_RADIO)
+	// ORIGINAL: both to_chat calls sent `msg` unchanged
+	// FENYSHA EDIT CHANGE END
 	return SAYMODE_MESSAGE_HANDLED
 
 

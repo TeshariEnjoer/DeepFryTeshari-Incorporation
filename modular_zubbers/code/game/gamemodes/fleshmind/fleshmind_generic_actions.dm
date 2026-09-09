@@ -80,7 +80,7 @@
 	for(var/mob/iterating_mob in GLOB.player_list)
 		if(!(iterating_mob.has_faction(FACTION_FLESHMIND)) && !isobserver(iterating_mob))
 			continue
-		to_chat(iterating_mob, span_purple("<b>FLESHMIND ([owner]):</b> [message]"))
+		to_chat(iterating_mob, translated_line(iterating_mob.client, span_purple("<b>FLESHMIND ([owner]):</b> [message]"), message, owner?.client)) // FENYSHA EDIT - AUTOTRANSLATE
 
 /datum/action/cooldown/fleshmind_plant_weeds
 	name = "Create Wireweed"

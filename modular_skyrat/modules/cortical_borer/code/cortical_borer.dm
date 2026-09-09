@@ -385,10 +385,13 @@ GLOBAL_LIST_EMPTY(cortical_borers)
 	if(split_message[1] == ";")
 		message = copytext(message, 2)
 		for(var/borer in GLOB.cortical_borers)
-			to_chat(borer, span_purple("<b>Cortical Hivemind: [src] sings, \"[message]\"</b>"))
+			// FENYSHA EDIT CHANGE - AUTOTRANSLATE - ORIGINAL: to_chat(borer, span_purple("<b>Cortical Hivemind: [src] sings, \"[message]\"</b>"))
+			var/mob/borer_mob = borer
+			to_chat(borer, translated_line(borer_mob?.client, span_purple("<b>Cortical Hivemind: [src] sings, \"[message]\"</b>"), message, client))
 		for(var/mob/dead_mob in GLOB.dead_mob_list)
 			var/link = FOLLOW_LINK(dead_mob, src)
-			to_chat(dead_mob, span_purple("[link] <b>Cortical Hivemind: [src] sings, \"[message]\"</b>"))
+			// FENYSHA EDIT CHANGE - AUTOTRANSLATE - ORIGINAL: to_chat(dead_mob, span_purple("[link] <b>Cortical Hivemind: [src] sings, \"[message]\"</b>"))
+			to_chat(dead_mob, translated_line(dead_mob.client, span_purple("[link] <b>Cortical Hivemind: [src] sings, \"[message]\"</b>"), message, client))
 		var/logging_textone = "[key_name(src)] spoke into the hivemind: [message]"
 		log_say(logging_textone)
 		return

@@ -360,7 +360,7 @@ GLOBAL_LIST_EMPTY(blob_nodes)
 	log_sayverb_talk(message, message_mods, tag = "blob hivemind telepathy")
 	var/messagepart = generate_messagepart(adjusted_message, message_mods = message_mods)
 	var/rendered = span_big(span_blob("<b>\[Blob Telepathy\] [name](<font color=\"[blobstrain.color]\">[blobstrain.name]</font>)</b> [messagepart]"))
-	relay_to_list_and_observers(rendered, GLOB.blob_telepathy_mobs, src, MESSAGE_TYPE_RADIO)
+	relay_to_list_and_observers(rendered, GLOB.blob_telepathy_mobs, src, MESSAGE_TYPE_RADIO, translatable_body = adjusted_message) // FENYSHA EDIT - AUTOTRANSLATE
 
 /mob/eye/blob/blob_act(obj/structure/blob/B)
 	return

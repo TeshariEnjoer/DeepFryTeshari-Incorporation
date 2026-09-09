@@ -297,9 +297,11 @@ GLOBAL_LIST_EMPTY(hivemind_users)
 
 	var/list/all_who_can_hear = assoc_to_keys(connected_network.linked_mobs) + network_owner
 
+	// FENYSHA EDIT CHANGE BEGIN - AUTOTRANSLATE - ORIGINAL: both sent `formatted_message` unchanged
 	for(var/mob/living/recipient as anything in all_who_can_hear)
-		to_chat(recipient, formatted_message)
+		to_chat(recipient, translated_line(recipient.client, formatted_message, message, user.client))
 
 	for(var/mob/recipient as anything in GLOB.dead_mob_list)
-		to_chat(recipient, "[FOLLOW_LINK(recipient, user)] [formatted_message]")
+		to_chat(recipient, "[FOLLOW_LINK(recipient, user)] [translated_line(recipient.client, formatted_message, message, user.client)]")
+	// FENYSHA EDIT CHANGE END
 

@@ -83,22 +83,29 @@ it will be sent to all connected chats.
 #define EXAMINE_HINT(text) ("<b>" + text + "</b>")
 
 /// Sends a message to all dead and observing players, if a source is provided a follow link will be attached.
-/proc/send_to_observers(message, source, message_type = null)
+// FENYSHA EDIT CHANGE - AUTOTRANSLATE - `translatable_body` is the plain prose inside message.
+// Supply it and each listener is shown the line in their own language; omit it and nothing changes.
+// ORIGINAL: /proc/send_to_observers(message, source, message_type = null)
+/proc/send_to_observers(message, source, message_type = null, translatable_body = null)
 	var/list/all_observers = GLOB.dead_player_list + GLOB.current_observers_list
+	var/client/author = ismob(source) ? source:client : null
 	for(var/mob/observer as anything in all_observers)
+		var/shown = translated_line(observer.client, message, translatable_body, author)
 		if (isnull(source))
-			to_chat(observer, "[message]", type = message_type)
+			to_chat(observer, "[shown]", type = message_type)
 			continue
 		var/link = FOLLOW_LINK(observer, source)
-		to_chat(observer, "[link] [message]", type = message_type)
+		to_chat(observer, "[link] [shown]", type = message_type)
 
 /// Sends a message to everyone within the list, as well as all observers.
-/proc/relay_to_list_and_observers(message, list/mob_list, source, message_type = null)
+// FENYSHA EDIT CHANGE - AUTOTRANSLATE - ORIGINAL: /proc/relay_to_list_and_observers(message, list/mob_list, source, message_type = null)
+/proc/relay_to_list_and_observers(message, list/mob_list, source, message_type = null, translatable_body = null)
+	var/client/author = ismob(source) ? source:client : null
 	for(var/mob/creature as anything in mob_list)
 		to_chat(
 			creature,
-			message,
+			translated_line(creature.client, message, translatable_body, author),
 			type = message_type,
 			avoid_highlighting = (creature == source),
 		)
-	send_to_observers(message, source)
+	send_to_observers(message, source, translatable_body = translatable_body)

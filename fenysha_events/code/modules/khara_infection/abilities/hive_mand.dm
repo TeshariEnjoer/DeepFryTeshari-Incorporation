@@ -64,5 +64,6 @@
 		listeners,
 		owner,
 		MESSAGE_TYPE_RADIO,
+		translatable_body = msg,
 	)
 	StartCooldown()
