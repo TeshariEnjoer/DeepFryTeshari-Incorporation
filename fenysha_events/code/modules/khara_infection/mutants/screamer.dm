@@ -274,7 +274,7 @@
 
 /mob/living/basic/khara_mutant/heat_of_infection_hand/Destroy()
 	if(owner && !QDELETED(owner))
-		owner.apply_damage(4000, BRUTE)
+		INVOKE_ASYNC(owner, TYPE_PROC_REF(/mob/living, apply_damage), 4000, TRUE)
 	return ..()
 
 /mob/living/basic/khara_mutant/heat_of_infection_hand/proc/prepare_for_attack()

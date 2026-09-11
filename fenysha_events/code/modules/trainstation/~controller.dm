@@ -296,6 +296,7 @@ SUBSYSTEM_DEF(train_controller)
 	if(!to_unload)
 		return
 	to_unload.unload_station(CALLBACK(src, PROC_REF(on_station_unloaded)), clear_turfs)
+	SEND_SIGNAL(src, COMSIG_TRAINSTATION_UNLOADED, to_unload)
 
 /datum/controller/subsystem/train_controller/proc/on_station_loaded()
 
@@ -512,7 +513,7 @@ SUBSYSTEM_DEF(train_controller)
 	soundloop.start()
 	sound_to_playing_players('fenysha_events/sounds/steam_short.ogg', volume = 60)
 	tain_starting = FALSE
-	SEND_SIGNAL(src, COMSIG_TRAIN_BEGIN_MOVING)
+	SEND_SIGNAL(src, COMSIG_TRAIN_BEGIN_MOVING, force)
 
 /datum/controller/subsystem/train_controller/proc/stop_moving()
 	if(!moving)

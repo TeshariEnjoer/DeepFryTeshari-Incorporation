@@ -308,15 +308,13 @@
 			if(isobserver(AM))
 				continue
 			POOL_ASYNC_RELEASE(AM)
-		// Still reset baseturfs either way: the incoming ChangeTurf inherits them, so skipping this would leave
-		// the outgoing station's base under the new one.
-		// baseturf_bottom is resolved per z-level by ChangeTurf, so what an explosion exposes is whatever
-		// ZTRAIT_BASETURF says. Hardcoding space here is what put space under every station floor.
+
+		var/new_baseturf = TRAIN_REGION_BASETURF[region] || /turf/open/misc/sandy_dirt/planet
 		if(!clear_turfs)
-			T.baseturfs = /turf/baseturf_bottom
+			T.baseturfs = new_baseturf
 			continue
-		T.ChangeTurf(/turf/open/space, null, CHANGETURF_DEFER_CHANGE)
-		T.baseturfs = /turf/baseturf_bottom
+		T.ChangeTurf(/turf/cordon, null, CHANGETURF_DEFER_CHANGE)
+		T.baseturfs = new_baseturf
 
 	// After the contents purge, so buttons and doors have already unregistered themselves.
 	purge_elevators_in(docking_turfs)
@@ -334,7 +332,7 @@
 /datum/train_station/proc/after_unload()
 	if(station_loop_sound)
 		station_loop_sound.stop()
-
+	purge_all_elevators()
 
 /// Generic station built at runtime from an admin-supplied map (uploaded file
 /// or an existing template's path). Not auto-loaded; constructed by

@@ -71,6 +71,7 @@
  * that currently fits can start clipping.
  */
 /datum/chatmessage/proc/grow_to_fit(body)
+	set waitfor = 0
 	if(!can_retext())
 		return FALSE
 	var/measured

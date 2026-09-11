@@ -389,16 +389,28 @@
 	name = "Road Barrier 4"
 	desc = "A fourth road barrier design."
 	icon_state = "roadbarrier4"
+	flags_1 = ON_BORDER_1
+	obj_flags = CAN_BE_HIT | BLOCKS_CONSTRUCTION_DIR | IGNORE_DENSITY
+	density = TRUE
+	anchored = TRUE
 
 /obj/structure/prop/general/roadbarrier5
 	name = "Road Barrier 5"
 	desc = "A fifth road barrier variant."
 	icon_state = "roadbarrier5"
+	flags_1 = ON_BORDER_1
+	obj_flags = CAN_BE_HIT | BLOCKS_CONSTRUCTION_DIR | IGNORE_DENSITY
+	density = TRUE
+	anchored = TRUE
 
 /obj/structure/prop/general/roadbarrier6
 	name = "Road Barrier 6"
 	desc = "A sixth road barrier design."
 	icon_state = "roadbarrier6"
+	flags_1 = ON_BORDER_1
+	obj_flags = CAN_BE_HIT | BLOCKS_CONSTRUCTION_DIR | IGNORE_DENSITY
+	density = TRUE
+	anchored = TRUE
 
 /obj/structure/prop/general/detonator
 	name = "Detonator"
@@ -439,16 +451,28 @@
 	name = "Center Road Barrier"
 	desc = "A central road barrier."
 	icon_state = "centerroadbarrier"
+	flags_1 = ON_BORDER_1
+	obj_flags = CAN_BE_HIT | BLOCKS_CONSTRUCTION_DIR | IGNORE_DENSITY
+	density = TRUE
+	anchored = TRUE
 
 /obj/structure/prop/general/centerroadbarrier2
 	name = "Center Road Barrier 2"
 	desc = "A second central road barrier."
 	icon_state = "centerroadbarrier2"
+	flags_1 = ON_BORDER_1
+	obj_flags = CAN_BE_HIT | BLOCKS_CONSTRUCTION_DIR | IGNORE_DENSITY
+	density = TRUE
+	anchored = TRUE
 
 /obj/structure/prop/general/centerroadbarrier3
 	name = "Center Road Barrier 3"
 	desc = "A third central road barrier."
 	icon_state = "centerroadbarrier3"
+	flags_1 = ON_BORDER_1
+	obj_flags = CAN_BE_HIT | BLOCKS_CONSTRUCTION_DIR | IGNORE_DENSITY
+	density = TRUE
+	anchored = TRUE
 
 /obj/structure/prop/general/frame
 	name = "Frame"

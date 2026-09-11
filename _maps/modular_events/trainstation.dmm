@@ -1,13 +1,13 @@
 //MAP CONVERTED BY dmm2tgm.py THIS HEADER COMMENT PREVENTS RECONVERSION, DO NOT REMOVE
 "a" = (
-/turf/open/space/basic,
+/turf/cordon,
 /area/space)
 "b" = (
 /turf/open/moving/auto_rail/rail,
 /area/trainstation/outdoor/rails)
 "d" = (
 /obj/effect/mapping_helpers/ztrait_injector/trainstation,
-/turf/open/space/basic,
+/turf/cordon,
 /area/space)
 "j" = (
 /turf/open/moving/auto_rail/top_connector,
@@ -17,7 +17,7 @@
 /area/trainstation/outdoor/rails)
 "D" = (
 /obj/effect/landmark/trainstation/raider_spawnpoint,
-/turf/open/space/basic,
+/turf/cordon,
 /area/space)
 "N" = (
 /obj/effect/landmark/trainstation/train_spawnpoint,
@@ -25,7 +25,7 @@
 /area/trainstation/outdoor/rails)
 "O" = (
 /obj/effect/landmark/trainstation/nearstation_spawnpoint,
-/turf/open/space/basic,
+/turf/cordon,
 /area/space)
 "P" = (
 /turf/open/moving/auto_rail/bottom_connector,
@@ -38,7 +38,7 @@
 /area/trainstation/outdoor/rails)
 "X" = (
 /obj/effect/landmark/trainstation/station_spawnpoint,
-/turf/open/space/basic,
+/turf/cordon,
 /area/space)
 
 (1,1,1) = {"

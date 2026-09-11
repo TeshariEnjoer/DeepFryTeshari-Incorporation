@@ -72,8 +72,10 @@
 	// Both of these are re-checked against the item's own component style on equip (see sanitize_core_selection and
 	// sanitize_accessories), so they only need to survive as lists
 	if(islist(details[INFO_GREYSCALE_COMPONENT_CORES]))
-		sanitized[INFO_GREYSCALE_COMPONENT_CORES] = details[INFO_GREYSCALE_COMPONENT_CORES].Copy()
+		var/list/grayscale_components_cores = details[INFO_GREYSCALE_COMPONENT_CORES] || list()
+		sanitized[INFO_GREYSCALE_COMPONENT_CORES] = grayscale_components_cores.Copy()
 	if(islist(details[INFO_GREYSCALE_COMPONENT_ACCESSORIES]))
-		sanitized[INFO_GREYSCALE_COMPONENT_ACCESSORIES] = details[INFO_GREYSCALE_COMPONENT_ACCESSORIES].Copy()
+		var/list/grayscale_components_accessories = details[INFO_GREYSCALE_COMPONENT_CORES] || list()
+		sanitized[INFO_GREYSCALE_COMPONENT_ACCESSORIES] = grayscale_components_accessories.Copy()
 
 	return sanitized

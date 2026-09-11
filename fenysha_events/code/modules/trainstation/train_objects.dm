@@ -342,7 +342,7 @@ MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/button/auto_detect, 24)
 	station.blocking_moving = FALSE
 	balloon_alert_to_viewers("Lock released!")
 	priority_announce("The station's magnetic locks have been disabled. Movement is permitted.", station?.name)
-	SEND_SIGNAL(SStrain_controller, COMSIG_TRAINSTATION_UNLOCKED)
+	SEND_SIGNAL(SStrain_controller, COMSIG_TRAINSTATION_UNLOCKED, src, station)
 	unlocked = TRUE
 	remove_filter("story_outline")
 
