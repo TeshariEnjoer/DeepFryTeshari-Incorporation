@@ -110,6 +110,33 @@
 		if(istype(preference) && preference.feature_key)
 			known_feature_keys[preference.feature_key] = TRUE
 
+#if defined(NOERP)
+	// MANDATORY_FEATURE_LIST still carries the erotic organ features on a NOERP build, where nothing applies them.
+	known_feature_keys -= list(
+		"balls_size",
+		"belly_size",
+		"belly_uses_skincolor",
+		"belly_uses_skintones",
+		"breasts_lactation",
+		"breasts_size",
+		"breasts_uses_skincolor",
+		"breasts_uses_skintones",
+		"butt_size",
+		"butt_uses_skincolor",
+		"butt_uses_skintones",
+		"penis_girth",
+		"penis_sheath",
+		"penis_size",
+		"penis_taur_mode",
+		"penis_uses_skincolor",
+		"penis_uses_skintones",
+		"testicles_uses_skincolor",
+		"testicles_uses_skintones",
+		"vagina_uses_skincolor",
+		"vagina_uses_skintones",
+	)
+#endif
+
 	return known_feature_keys
 
 /**

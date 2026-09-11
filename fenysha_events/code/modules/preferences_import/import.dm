@@ -217,7 +217,7 @@
 		if(setting != RANDOM_ENABLED && setting != RANDOM_ANTAG_ONLY)
 			continue
 		var/datum/preference/preference = GLOB.preference_entries_by_key[preference_key]
-		if(isnull(preference) || !preference.is_randomizable())
+		if(isnull(preference) || !preference.is_preference_enabled() || !preference.is_randomizable())
 			continue
 		sanitized[preference_key] = setting
 	return sanitized

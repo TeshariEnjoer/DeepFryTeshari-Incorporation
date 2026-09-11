@@ -29,7 +29,9 @@
 	new	/obj/item/clothing/gloves/elofy(src)
 	new	/obj/item/clothing/shoes/jackboots/elofy(src)
 	new	/obj/item/clothing/head/playbunnyears/hos(src)
+#if !defined(NOERP)
 	new	/obj/item/clothing/under/rank/security/head_of_security/bunnysuit(src)
+#endif
 	new	/obj/item/clothing/suit/armor/hos_tailcoat(src)
 	new	/obj/item/clothing/under/rank/security/head_of_security/suit/red(src)
 	new /obj/item/clothing/head/hats/hos/beret/navyhos(src)

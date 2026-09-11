@@ -20,12 +20,18 @@
 		/obj/item/clothing/suit/toggle/labcoat/technical/medical/black = 3,
 		/obj/item/clothing/suit/toggle/labcoat/technical/medical/dark = 3,
 		/obj/item/clothing/suit/toggle/labcoat/virologist = 4,
+#if !defined(NOERP)
 		/obj/item/clothing/under/rank/civilian/psychologist_bunnysuit = 3,
+#endif
 		/obj/item/clothing/under/rank/engineering/engineer/skyrat/hazard_chem/emt = 2,
+#if !defined(NOERP)
 		/obj/item/clothing/under/rank/medical/doctor_bunnysuit = 3,
+#endif
 		/obj/item/clothing/under/rank/medical/doctor/nurse = 3,
 		/obj/item/clothing/under/rank/medical/doctor/skyrat/utility = 4,
+#if !defined(NOERP)
 		/obj/item/clothing/under/rank/medical/paramedic_bunnysuit = 3,
+#endif
 		/obj/item/clothing/under/rank/medical/scrubs/skyrat/red = 4,
 		/obj/item/clothing/under/rank/medical/scrubs/skyrat/white = 4,
 		/obj/item/clothing/under/rank/medical/virologist = 4,
@@ -43,7 +49,9 @@
 		/obj/item/clothing/suit/toggle/jacket/zubber/bomber/science/chem = 2,
 		/obj/item/clothing/suit/toggle/labcoat/chemist/doctor_tailcoat = 2,
 		/obj/item/clothing/suit/toggle/labcoat/chemist/skyrat/pharmacist = 2,
+#if !defined(NOERP)
 		/obj/item/clothing/under/rank/medical/chemist/bunnysuit = 2,
+#endif
 		/obj/item/clothing/under/rank/medical/chemist/skyrat/formal = 2,
 		/obj/item/clothing/under/rank/medical/chemist/skyrat/formal/skirt = 2,
 		/obj/item/storage/backpack/messenger/chem = 2,
@@ -55,7 +63,9 @@
 		/obj/item/clothing/head/playbunnyears/pathologist = 2,
 		/obj/item/clothing/neck/tie/bunnytie/pathologist = 2,
 		/obj/item/clothing/suit/toggle/labcoat/virologist/doctor_tailcoat = 2,
+#if !defined(NOERP)
 		/obj/item/clothing/under/rank/medical/pathologist_bunnysuit = 2,
+#endif
 		/obj/item/storage/backpack/messenger/vir = 2,
 	)
 
@@ -65,7 +75,9 @@
 		/obj/item/clothing/neck/tie/bunnytie/coroner = 2,
 		/obj/item/clothing/suit/toggle/jacket/zubber/bomber/science/coroner = 2,
 		/obj/item/clothing/suit/toggle/labcoat/coroner/doctor_tailcoat = 2,
+#if !defined(NOERP)
 		/obj/item/clothing/under/rank/medical/coroner_bunnysuit = 2,
+#endif
 	)
 
 /obj/machinery/vending/wardrobe/science_wardrobe
@@ -75,7 +87,9 @@
 		/obj/item/clothing/suit/toggle/jacket/zubber/bomber/science = 3,
 		/obj/item/clothing/suit/toggle/labcoat/science/doctor_tailcoat = 3,
 		/obj/item/clothing/suit/toggle/labcoat/technical/science = 3,
+#if !defined(NOERP)
 		/obj/item/clothing/under/rank/rnd/scientist/bunnysuit = 3,
+#endif
 		/obj/item/clothing/under/rank/rnd/scientist/skyrat/hlscience = 3,
 		/obj/item/clothing/under/rank/rnd/scientist/skyrat/utility = 3,
 		/obj/item/storage/backpack/messenger/science = 3,
@@ -96,7 +110,9 @@
 				/obj/item/clothing/suit/toggle/jacket/zubber/bomber/science/robotics = 2,
 				/obj/item/clothing/suit/toggle/labcoat/roboticist/doctor_tailcoat = 2,
 				/obj/item/clothing/under/rank/rnd/roboticist/skyrat/sleek = 2,
+#if !defined(NOERP)
 				/obj/item/clothing/under/rank/rnd/scientist/roboticist_bunnysuit = 2,
+#endif
 				/obj/item/storage/backpack/duffelbag/science/robo = 2,
 				/obj/item/storage/backpack/messenger/science/robo = 2,
 				/obj/item/storage/backpack/satchel/science/robo = 2,
@@ -154,7 +170,9 @@
 	/obj/item/clothing/head/playbunnyears/geneticist = 2,
 	/obj/item/clothing/neck/tie/bunnytie/geneticist = 2,
 	/obj/item/clothing/suit/toggle/labcoat/genetics/doctor_tailcoat = 2,
+#if !defined(NOERP)
 	/obj/item/clothing/under/rank/rnd/geneticist/bunnysuit = 2,
+#endif
 	)
 
 /obj/machinery/vending/wardrobe/det_wardrobe
@@ -173,8 +191,10 @@
 		/obj/item/clothing/suit/toggle/labcoat/skyrat/highvis = 2,
 		/obj/item/clothing/under/costume/cybersleek = 2,
 		/obj/item/clothing/under/costume/cybersleek/long = 2,
+#if !defined(NOERP)
 		/obj/item/clothing/under/rank/security/detective_bunnysuit = 2,
 		/obj/item/clothing/under/rank/security/detective_bunnysuit/noir = 2,
+#endif
 		/obj/item/clothing/under/rank/security/detective/cowboy = 2,
 		/obj/item/clothing/under/rank/security/detective/runner = 2,
 		/obj/item/storage/backpack/messenger/sec = 2,
@@ -198,9 +218,11 @@
 		/obj/item/clothing/suit/toggle/jacket/zubber/bomber/cargo/smith = 3,
 		/obj/item/clothing/suit/toggle/labcoat/technical/cargo = 3,
 		/obj/item/clothing/under/jumpsuit/caligram_fatigues_tan = 3,
+#if !defined(NOERP)
 		/obj/item/clothing/under/rank/cargo/bitrunner/bunnysuit = 3,
 		/obj/item/clothing/under/rank/cargo/cargo_bunnysuit = 3,
 		/obj/item/clothing/under/rank/cargo/mailman_bunnysuit = 1,
+#endif
 		/obj/item/clothing/under/rank/cargo/tech/skyrat/casualman = 3,
 		/obj/item/clothing/under/rank/cargo/tech/skyrat/gorka = 3,
 		/obj/item/clothing/under/rank/cargo/tech/skyrat/long = 3,
@@ -229,7 +251,9 @@
 		/obj/item/clothing/suit/costume/nemes = 1,
 		/obj/item/clothing/suit/jacket/brasspriest = 1,
 		/obj/item/clothing/suit/jacket/tailcoat/chaplain = 1,
+#if !defined(NOERP)
 		/obj/item/clothing/under/rank/civilian/chaplain_bunnysuit = 1,
+#endif
 	)
 	zubbers_contraband = list(
 		/obj/item/clothing/neck/chaplain = 1,
@@ -246,9 +270,11 @@
 		/obj/item/clothing/suit/jacket/tailcoat/curator_red = 2,
 		/obj/item/clothing/suit/jacket/tailcoat/curator_teal = 2,
 		/obj/item/clothing/under/occult = 2,
+#if !defined(NOERP)
 		/obj/item/clothing/under/rank/civilian/curator_bunnysuit_green = 2,
 		/obj/item/clothing/under/rank/civilian/curator_bunnysuit_red = 2,
 		/obj/item/clothing/under/rank/civilian/curator_bunnysuit_teal = 2,
+#endif
 		/obj/item/storage/belt/fannypack/occult = 2,
 	)
 
@@ -260,7 +286,9 @@
 		/obj/item/clothing/suit/jacket/tailcoat/janitor = 3,
 		/obj/item/clothing/suit/toggle/labcoat/technical/service = 3,
 		/obj/item/clothing/under/costume/dragon_maid = 3,
+#if !defined(NOERP)
 		/obj/item/clothing/under/rank/civilian/janitor/bunnysuit = 3,
+#endif
 	)
 
 /obj/machinery/vending/wardrobe/bar_wardrobe
@@ -270,7 +298,9 @@
 		/obj/item/clothing/suit/hooded/wintercoat/skyrat/bartender = 2,
 		/obj/item/clothing/suit/jacket/tailcoat/bartender = 2,
 		/obj/item/clothing/suit/toggle/labcoat/technical/service = 3,
+#if !defined(NOERP)
 		/obj/item/clothing/under/rank/civilian/bartender_bunnysuit = 2,
+#endif
 	)
 
 /obj/machinery/vending/wardrobe/chef_wardrobe
@@ -286,7 +316,9 @@
 		/obj/item/clothing/suit/misc/allamerican = 1,
 		/obj/item/clothing/under/costume/allamerican = 2,
 		/obj/item/clothing/under/costume/allamerican/manager = 1,
+#if !defined(NOERP)
 		/obj/item/clothing/under/rank/civilian/cook_bunnysuit = 2,
+#endif
 	)
 
 /obj/machinery/vending/wardrobe/hydro_wardrobe
@@ -294,7 +326,9 @@
 		/obj/item/clothing/head/playbunnyears/botanist = 2,
 		/obj/item/clothing/neck/tie/bunnytie/botanist = 2,
 		/obj/item/clothing/suit/jacket/tailcoat/botanist = 2,
+#if !defined(NOERP)
 		/obj/item/clothing/under/rank/civilian/hydroponics/bunnysuit = 2,
+#endif
 		/obj/item/clothing/suit/toggle/jacket/zubber/bomber/hydro = 2,
 	)
 	zubbers_contraband = list(
@@ -318,10 +352,12 @@
 		/obj/item/clothing/suit/jacket/tailcoat/lawyer_blue = 3,
 		/obj/item/clothing/suit/jacket/tailcoat/lawyer_good = 3,
 		/obj/item/clothing/suit/jacket/tailcoat/lawyer_red = 3,
+#if !defined(NOERP)
 		/obj/item/clothing/under/rank/civilian/lawyer_bunnysuit_black = 3,
 		/obj/item/clothing/under/rank/civilian/lawyer_bunnysuit_blue = 3,
 		/obj/item/clothing/under/rank/civilian/lawyer_bunnysuit_good = 3,
 		/obj/item/clothing/under/rank/civilian/lawyer_bunnysuit_red = 3,
+#endif
 		/obj/item/clothing/under/suit/skyrat/black_really_collared = 3,
 		/obj/item/clothing/under/suit/skyrat/black_really_collared/skirt = 3,
 		/obj/item/clothing/under/suit/skyrat/inferno = 3,
@@ -338,14 +374,18 @@
 		/obj/item/clothing/gloves/combat/boss = 1,
 		/obj/item/clothing/shoes/combat/boss = 1,
 		/obj/item/clothing/suit/toggle/jacket/zubber/bomber/syndicate = 3,
+#if !defined(NOERP)
 		/obj/item/clothing/under/syndicate/syndibunny = 3,
+#endif
 	)
 
 /obj/machinery/vending/magivend
 	zubbers_products = list(
 		/obj/item/clothing/neck/tie/bunnytie/magician = 3,
 		/obj/item/clothing/suit/wizrobe/magician = 3,
+#if !defined(NOERP)
 		/obj/item/clothing/under/costume/playbunny/magician = 3,
+#endif
 	)
 
 /obj/machinery/vending/wardrobe/engi_wardrobe
@@ -365,7 +405,9 @@
 		/obj/item/clothing/suit/toggle/labcoat/technical/engineer/tcomm = 3,
 		/obj/item/clothing/suit/toggle/labcoat/skyrat/highvis = 3,
 		/obj/item/clothing/under/misc/overalls = 3,
+#if !defined(NOERP)
 		/obj/item/clothing/under/rank/engineering/engineer_bunnysuit = 3,
+#endif
 		/obj/item/clothing/under/rank/engineering/engineer/skyrat/hazard_chem = 3,
 		/obj/item/clothing/under/rank/engineering/engineer/skyrat/trouser = 3,
 		/obj/item/clothing/under/rank/engineering/engineer/skyrat/utility = 3,
@@ -384,7 +426,9 @@
 		/obj/item/clothing/shoes/workboots/heeled = 3,
 		/obj/item/clothing/suit/utility/fire/atmos_tech_tailcoat = 3,
 		/obj/item/clothing/suit/utility/fire/atmosbomber = 3,
+#if !defined(NOERP)
 		/obj/item/clothing/under/rank/engineering/atmos_tech_bunnysuit = 3,
+#endif
 		/obj/item/storage/backpack/messenger/eng = 3,
 	)
 

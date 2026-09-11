@@ -33,11 +33,15 @@
 					/obj/item/clothing/head/security_beanie = 6,
 					/obj/item/clothing/head/costume/ushanka/sec = 10,
 					/obj/item/clothing/head/playbunnyears/security = 6,
+#if !defined(NOERP)
 					/obj/item/clothing/under/rank/security/security_bunnysuit = 6,
+#endif
 					/obj/item/clothing/suit/armor/security_tailcoat = 6,
 					/obj/item/clothing/neck/tie/bunnytie/security = 6,
 					/obj/item/clothing/head/playbunnyears/security/assistant = 6,
+#if !defined(NOERP)
 					/obj/item/clothing/under/rank/security/security_assistant_bunnysuit = 6,
+#endif
 					/obj/item/clothing/suit/armor/security_tailcoat/assistant = 6,
 					/obj/item/clothing/neck/tie/bunnytie/security_assistant = 6,
 					/obj/item/clothing/mask/bandana/red = 6,
@@ -96,7 +100,9 @@
 					/obj/item/clothing/head/helmet/sec/peacekeeper/security_medic = 3,
 					/obj/item/clothing/head/beret/sec/security_medic = 3,
 					/obj/item/clothing/head/playbunnyears/brig_phys = 3,
+#if !defined(NOERP)
 					/obj/item/clothing/under/rank/security/brig_phys_bunnysuit = 3,
+#endif
 					/obj/item/clothing/suit/toggle/labcoat/skyrat/security_medic/doctor_tailcoat = 3,
 					/obj/item/clothing/neck/tie/bunnytie/brig_phys = 3,
 					/obj/item/clothing/under/rank/medical/scrubs/skyrat/red/sec = 3,
@@ -116,7 +122,9 @@
 				/obj/item/clothing/suit/toggle/jacket/corrections_officer = 2,
 				/obj/item/clothing/under/rank/prisoner/classic = 6, //To be given to Prisoners.
 				/obj/item/clothing/head/playbunnyears/prisoner = 6,
+#if !defined(NOERP)
 				/obj/item/clothing/under/rank/security/prisoner_bunnysuit = 6,
+#endif
 				/obj/item/clothing/neck/tie/bunnytie/prisoner = 6,
 			),
 		),

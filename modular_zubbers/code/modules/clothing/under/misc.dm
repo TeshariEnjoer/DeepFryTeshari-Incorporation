@@ -10,6 +10,7 @@
 	worn_icon_teshari = 'modular_zubbers/icons/mob/clothing/under/uniform_teshari.dmi'
 	body_parts_covered = CHEST|LEGS|GROIN
 
+#if !defined(NOERP)
 //ALL BUNNY STUFF BY DimWhat OF MONKEESTATION
 
 /obj/item/clothing/under/costume/playbunny
@@ -550,6 +551,7 @@
 	alt_covers_chest = TRUE
 
 //BUNNY STUFF END, SPRITES BY DimWhat OF MONKE STATION
+#endif
 
 /obj/item/clothing/under/rank/civilian/microstar_suit
 	name = "\improper MicroStar SCI-MED suit"

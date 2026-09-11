@@ -76,7 +76,9 @@
 	new /obj/item/clothing/shoes/laceup(src)
 //Duplication from Commdrobe
 	new /obj/item/clothing/head/playbunnyears/hop(src)
+#if !defined(NOERP)
 	new /obj/item/clothing/under/rank/civilian/hop_bunnysuit(src)
+#endif
 	new /obj/item/clothing/suit/armor/hop_tailcoat(src)
 	new /obj/item/clothing/neck/tie/bunnytie/hop(src)
 	new /obj/item/clothing/head/hopcap/beret(src)
@@ -143,7 +145,9 @@
 	new /obj/item/clothing/suit/toggle/labcoat(src)
 	new /obj/item/clothing/suit/toggle/labcoat/research_director(src)
 	new	/obj/item/clothing/head/playbunnyears/rd(src)
+#if !defined(NOERP)
 	new /obj/item/clothing/under/rank/rnd/research_director/bunnysuit(src)
+#endif
 	new /obj/item/clothing/suit/toggle/labcoat/research_director/tailcoat(src)
 	new /obj/item/clothing/neck/tie/bunnytie/rd(src)
 
@@ -169,7 +173,9 @@
 	new /obj/item/clothing/head/beret/medical/cmo/alt(src)
 	new /obj/item/clothing/neck/mantle/cmomantle(src)
 	new /obj/item/clothing/head/playbunnyears/cmo(src)
+#if !defined(NOERP)
 	new /obj/item/clothing/under/rank/medical/cmo_bunnysuit(src)
+#endif
 	new /obj/item/clothing/suit/toggle/labcoat/cmo/doctor_tailcoat(src)
 	new /obj/item/clothing/neck/tie/bunnytie/cmo(src)
 
@@ -210,7 +216,9 @@
 	new /obj/item/clothing/under/rank/cargo/qm/skyrat/formal(src)
 	new /obj/item/clothing/under/rank/cargo/qm/skyrat/formal/skirt(src)
 	new /obj/item/clothing/head/playbunnyears/quartermaster(src)
+#if !defined(NOERP)
 	new /obj/item/clothing/under/rank/cargo/quartermaster_bunnysuit(src)
+#endif
 	new /obj/item/clothing/suit/jacket/tailcoat/quartermaster(src)
 	new /obj/item/clothing/neck/tie/bunnytie/cargo(src)
 

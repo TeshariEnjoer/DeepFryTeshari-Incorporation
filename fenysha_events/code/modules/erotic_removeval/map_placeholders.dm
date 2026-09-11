@@ -58,6 +58,16 @@
 /obj/item/clothing/gloves/ball_mittens
 	parent_type = /obj/effect/noerp_removed
 
+/obj/item/clothing/gloves/combat/maid
+	parent_type = /obj/effect/noerp_removed
+
+/obj/item/clothing/gloves/combat/maid/armored
+
+/obj/item/clothing/head/costume/maid_headband/syndicate
+	parent_type = /obj/effect/noerp_removed
+
+/obj/item/clothing/head/costume/maid_headband/syndicate/armored
+
 /obj/item/clothing/mask/leatherwhip
 	parent_type = /obj/effect/noerp_removed
 
@@ -80,6 +90,16 @@
 /obj/item/clothing/sextoy/vibrator
 
 /obj/item/clothing/sextoy/vibroring
+
+/obj/item/clothing/under/syndicate/skyrat/maid
+	parent_type = /obj/effect/noerp_removed
+
+/obj/item/clothing/under/syndicate/skyrat/maid/armored
+
+/obj/item/clothing/under/syndicate/syndibunny
+	parent_type = /obj/effect/noerp_removed
+
+/obj/item/clothing/under/syndicate/syndibunny/fake
 
 /obj/item/condom_pack
 	parent_type = /obj/effect/noerp_removed
@@ -133,6 +153,12 @@
 	parent_type = /obj/effect/noerp_removed
 
 /obj/item/storage/box/strippole_kit
+	parent_type = /obj/effect/noerp_removed
+
+/obj/item/storage/box/syndibunny
+	parent_type = /obj/effect/noerp_removed
+
+/obj/item/storage/box/syndimaid
 	parent_type = /obj/effect/noerp_removed
 
 /obj/item/tickle_feather

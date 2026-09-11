@@ -15,7 +15,7 @@
 
 	for (var/preference_type in GLOB.preference_entries)
 		var/datum/preference/preference = GLOB.preference_entries[preference_type]
-		if (!preference.is_randomizable())
+		if (!preference.is_randomizable() || !preference.is_preference_enabled()) // FENYSHA EDIT CHANGE - NOERP - ORIGINAL: if (!preference.is_randomizable())
 			continue
 
 		randomizable += preference.savefile_key
@@ -41,7 +41,7 @@
 	if (isnull(requested_preference))
 		return FALSE
 
-	if (!requested_preference.is_randomizable())
+	if (!requested_preference.is_randomizable() || !requested_preference.is_preference_enabled()) // FENYSHA EDIT CHANGE - NOERP - ORIGINAL: if (!requested_preference.is_randomizable())
 		return FALSE
 
 	if (value == RANDOM_ANTAG_ONLY)

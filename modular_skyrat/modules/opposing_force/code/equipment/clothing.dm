@@ -57,6 +57,7 @@
 	new /obj/item/hhmirror/syndie(src)
 	new /obj/item/storage/box/syndie_kit/space_suit(src)
 
+#if !defined(NOERP)
 /datum/opposing_force_equipment/clothing_syndicate/maid
 	name = "Syndicate Maid"
 	description = "..."
@@ -69,6 +70,7 @@
 	new /obj/item/clothing/shoes/laceup(src)
 	new /obj/item/radio/headset/syndicate/alt(src)
 	new /obj/item/card/id/advanced/chameleon(src)
+#endif
 
 /datum/opposing_force_equipment/clothing_syndicate/cybersun_operative
 	name = "Cybersun Operative"

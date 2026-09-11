@@ -9720,7 +9720,9 @@
 #include "modular_zubbers\code\modules\clothing\neck\collars.dm"
 #include "modular_zubbers\code\modules\clothing\neck\neck.dm"
 #include "modular_zubbers\code\modules\clothing\neck\size_changing.dm"
+#if !defined(NOERP)
 #include "modular_zubbers\code\modules\clothing\outfits\bunny.dm"
+#endif
 #include "modular_zubbers\code\modules\clothing\outfits\ert.dm"
 #include "modular_zubbers\code\modules\clothing\outfits\lace.dm"
 #include "modular_zubbers\code\modules\clothing\outfits\outlast.dm"
@@ -10423,8 +10425,10 @@
 #include "modular_zubbers\code\modules\uplink\uplink_items\species\lycan_booster.dm"
 #include "modular_zubbers\code\modules\uplink\uplink_items\syndicat\_syndicat.dm"
 #include "modular_zubbers\code\modules\uplink\uplink_items\syndie_cheerleader\_syndie_cheerleader.dm"
+#if !defined(NOERP)
 #include "modular_zubbers\code\modules\uplink\uplink_items\syndimaid\_syndimaid.dm"
 #include "modular_zubbers\code\modules\uplink\uplink_items\syndimaid\clothes.dm"
+#endif
 #include "modular_zubbers\code\modules\vehicles\mech_fabricator.dm"
 #include "modular_zubbers\code\modules\vehicles\mecha\ripley.dm"
 #include "modular_zubbers\code\modules\vehicles\mecha\equipment\weapons.dm"

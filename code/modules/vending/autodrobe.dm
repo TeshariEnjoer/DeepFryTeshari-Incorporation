@@ -82,11 +82,13 @@ GLOBAL_LIST_INIT(autodrobe_costumes_items, list(
 	/obj/item/clothing/suit/toggle/recruiter_jacket = 3,
 	/obj/item/clothing/under/costume/dragon_maid = 3,
 	/obj/item/clothing/under/costume/hlciv = 6,
+#if !defined(NOERP)
 	/obj/item/clothing/under/costume/playbunny/british = 6,
 	/obj/item/clothing/under/costume/playbunny/communist = 6,
 	/obj/item/clothing/under/costume/playbunny/greyscale = 6,
 	/obj/item/clothing/under/costume/playbunny/magician = 6,
 	/obj/item/clothing/under/costume/playbunny/usa = 6,
+#endif
 	/obj/item/clothing/under/costume/skyrat/cavalry = 5,
 	/obj/item/clothing/under/doug_dimmadome = 5,
 	/obj/item/clothing/under/recruiter_uniform = 3,
@@ -164,8 +166,10 @@ GLOBAL_LIST_INIT(autodrobe_entretainers_items, list(
 	/obj/item/clothing/under/rank/civilian/bubber/clown/skirt = 3,
 	/obj/item/clothing/under/rank/civilian/bubber/clown/skirt/clussy = 3,
 	/obj/item/clothing/under/rank/civilian/clown/britches = 3,
+#if !defined(NOERP)
 	/obj/item/clothing/under/rank/civilian/clown/clown_bunnysuit = 3,
 	/obj/item/clothing/under/rank/civilian/mime_bunnysuit = 3,
+#endif
 	// BUBBER EDIT ADDITION END - Extra stuff
 ))
 
@@ -329,7 +333,9 @@ GLOBAL_LIST_INIT(autodrobe_contraband_items, list(
 	/obj/item/clothing/under/rank/security/detective/cowboy/armorless = 3,
 	/obj/item/clothing/under/syndicate/skyrat/enclave = 3,
 	/obj/item/clothing/under/syndicate/skyrat/enclave/officer = 3,
+#if !defined(NOERP)
 	/obj/item/clothing/under/syndicate/syndibunny/fake = 3,
+#endif
 	/obj/item/clothing/head/bandana/snake = 3, //Solid, Vic and ... Venom I guess?
 	/obj/item/clothing/under/rank/civilian/bubber/boss = 3, //Okay maybe there is room for more than one Boss and Snake
 	/obj/item/clothing/gloves/bubber/boss = 3,
