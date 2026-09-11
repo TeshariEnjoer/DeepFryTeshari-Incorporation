@@ -103,39 +103,12 @@
 	for(var/feature_key in SSaccessories.feature_list)
 		known_feature_keys[feature_key] = TRUE
 	for(var/datum/dna_block/feature/block as anything in subtypesof(/datum/dna_block/feature))
-		if(block::feature_key)
+		if(block::feature_key && !block::mutant_part)
 			known_feature_keys[block::feature_key] = TRUE
 	for(var/preference_type in GLOB.preference_entries)
 		var/datum/preference/choiced/species_feature/preference = GLOB.preference_entries[preference_type]
 		if(istype(preference) && preference.feature_key)
 			known_feature_keys[preference.feature_key] = TRUE
-
-#if defined(NOERP)
-	// MANDATORY_FEATURE_LIST still carries the erotic organ features on a NOERP build, where nothing applies them.
-	known_feature_keys -= list(
-		"balls_size",
-		"belly_size",
-		"belly_uses_skincolor",
-		"belly_uses_skintones",
-		"breasts_lactation",
-		"breasts_size",
-		"breasts_uses_skincolor",
-		"breasts_uses_skintones",
-		"butt_size",
-		"butt_uses_skincolor",
-		"butt_uses_skintones",
-		"penis_girth",
-		"penis_sheath",
-		"penis_size",
-		"penis_taur_mode",
-		"penis_uses_skincolor",
-		"penis_uses_skintones",
-		"testicles_uses_skincolor",
-		"testicles_uses_skintones",
-		"vagina_uses_skincolor",
-		"vagina_uses_skintones",
-	)
-#endif
 
 	return known_feature_keys
 

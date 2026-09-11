@@ -176,7 +176,7 @@
 	if(isnull(SSaccessories.sprite_accessories["penis"]))
 		TEST_ASSERT_EQUAL(length(character["mutant_bodyparts"]), 0, "a genital mutant bodypart survived import with no accessory to match")
 
-	// The erotic organ features stay in MANDATORY_FEATURE_LIST, so a NOERP build has to reject them by name
+	// MANDATORY_FEATURE_LIST seeds no erotic organ feature on this build, so there is no key for these to match
 #if defined(NOERP)
 	var/list/imported_features = character["features"]
 	TEST_ASSERT(!("penis_size" in imported_features), "an erotic DNA feature key survived import on a build that applies none of them")
