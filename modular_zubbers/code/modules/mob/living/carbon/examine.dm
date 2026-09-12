@@ -14,11 +14,10 @@
 	var/face_obscured = (covered_slots & HIDEFACE) && obscurity_examine_pref
 
 #if defined(NOERP)
-	// FENYSHA EDIT ADDITION - no examine panel on these builds, so the description goes
-	// straight into chat rather than behind a look-closer link.
+	// FENYSHA EDIT ADDITION - no examine panel on these builds, so a long description collapses in chat
 	if(face_obscured || !length(full_text))
 		return null
-	return span_notice(translated_chat_text(user?.client, full_text, client))
+	return span_notice(collapsed_chat_text(user?.client, full_text, client))
 #else
 	var/flavor_text_link
 	/// The first 1-FLAVOR_PREVIEW_LIMIT characters in the mob's "flavor_text" DNA feature. FLAVOR_PREVIEW_LIMIT is defined in flavor_defines.dm.

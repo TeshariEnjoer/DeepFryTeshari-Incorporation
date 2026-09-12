@@ -138,6 +138,7 @@
 	icon_state = "dssoft"
 	soft_type = "ds"
 
+#if !defined(NOERP)
 //Maid Outfit
 /obj/item/clothing/head/costume/maid_headband/syndicate
 	name = "tactical maid headband"
@@ -181,6 +182,7 @@
 	icon_state = "syndimaid_corset"
 	minimize_when_attached = FALSE
 	attachment_slot = null
+#endif
 
 //Wintercoat & Hood
 /obj/item/clothing/suit/hooded/wintercoat/skyrat/syndicate

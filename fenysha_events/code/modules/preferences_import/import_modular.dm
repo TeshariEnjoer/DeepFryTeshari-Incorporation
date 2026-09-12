@@ -103,7 +103,7 @@
 	for(var/feature_key in SSaccessories.feature_list)
 		known_feature_keys[feature_key] = TRUE
 	for(var/datum/dna_block/feature/block as anything in subtypesof(/datum/dna_block/feature))
-		if(block::feature_key)
+		if(block::feature_key && !block::mutant_part)
 			known_feature_keys[block::feature_key] = TRUE
 	for(var/preference_type in GLOB.preference_entries)
 		var/datum/preference/choiced/species_feature/preference = GLOB.preference_entries[preference_type]

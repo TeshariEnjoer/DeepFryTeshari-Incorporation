@@ -17,7 +17,9 @@
 	new /obj/item/clothing/head/playbunnyears/miner(src)
 	new /obj/item/clothing/neck/tie/bunnytie/miner(src)
 	new /obj/item/clothing/suit/jacket/tailcoat/miner(src)
+#if !defined(NOERP)
 	new /obj/item/clothing/under/rank/cargo/miner/bunnysuit(src)
+#endif
 	new /obj/item/clothing/shoes/workboots/mining/heeled(src)
 
 /datum/orderable_item/mining/bunny

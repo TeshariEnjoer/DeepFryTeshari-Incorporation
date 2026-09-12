@@ -152,10 +152,12 @@
 	item_path = /obj/item/clothing/head/costume/hairbow
 	donator_only = TRUE
 
+#if !defined(NOERP)
 /datum/loadout_item/head/tactical_maid_headband //Donor item for skyefree
 	name = "Tactical Maid Headband"
 	item_path = /obj/item/clothing/head/costume/maid_headband/syndicate
 	donator_only = TRUE
+#endif
 
 /datum/loadout_item/head/mime_bunny_ears
 	name = "Mime's Bunny Ears"

@@ -1,3 +1,4 @@
+#if !defined(NOERP)
 /obj/item/storage/box/syndibunny
 	name = "Syndicate bunny assassin outfit"
 	desc = "A box containing a high tech specialized syndicate... bunny suit?"
@@ -12,6 +13,7 @@
 		/obj/item/clothing/shoes/fancy_heels/syndi = 1,
 		/obj/item/clothing/gloves/combat/white = 1,
 	), src)
+#endif
 
 /obj/item/clothing/head/henchmen_hat/traitor
 	name = "armored henchmen cap"

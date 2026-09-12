@@ -87,13 +87,11 @@
 #define BELLY_MIN_SIZE 0
 #define BELLY_MAX_SIZE 9 // 10 is in the code, but too much.
 
-#define MANDATORY_FEATURE_LIST list(\
-	"mcolor" = "#FFFFBB",\
-	"mcolor2" = "#FFFFBB",\
-	"mcolor3" = "#FFFFBB",\
-	"ethcolor" = "#FFCCCC",\
-	"skin_color" = "#FFEEDD",\
-	"flavor_text" = "",\
+// FENYSHA EDIT CHANGE BEGIN - NOERP - the erotic organ features are split out so a NOERP build seeds none of them
+#if defined(NOERP)
+#define EROTIC_FEATURE_ENTRIES
+#else
+#define EROTIC_FEATURE_ENTRIES \
 	"breasts_size" = 1,\
 	"breasts_lactation" = FALSE,\
 	"penis_size" = 13,\
@@ -101,7 +99,6 @@
 	"penis_taur_mode" = TRUE,\
 	"penis_sheath" = SHEATH_NONE,\
 	"balls_size" = 1,\
-	"custom_species" = "",\
 	"penis_uses_skintones" = TRUE,\
 	"penis_uses_skincolor" = TRUE,\
 	"testicles_uses_skintones" = TRUE,\
@@ -109,8 +106,20 @@
 	"vagina_uses_skintones" = TRUE,\
 	"vagina_uses_skincolor" = TRUE,\
 	"breasts_uses_skintones" = TRUE,\
-	"breasts_uses_skincolor" = TRUE,\
+	"breasts_uses_skincolor" = TRUE,
+#endif
+
+#define MANDATORY_FEATURE_LIST list(\
+	"mcolor" = "#FFFFBB",\
+	"mcolor2" = "#FFFFBB",\
+	"mcolor3" = "#FFFFBB",\
+	"ethcolor" = "#FFCCCC",\
+	"skin_color" = "#FFEEDD",\
+	"flavor_text" = "",\
+	"custom_species" = "",\
+	EROTIC_FEATURE_ENTRIES \
 )
+// FENYSHA EDIT CHANGE END
 
 #define AROUSAL_CANT 0
 #define AROUSAL_NONE 1

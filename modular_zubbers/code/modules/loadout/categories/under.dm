@@ -227,9 +227,11 @@
 	item_path = /obj/item/clothing/under/misc/latex_halfcatsuit
 #endif
 
+#if !defined(NOERP)
 /datum/loadout_item/uniform/miscellaneous/custom_bunnysuit
 	name = "Custom Bunnysuit"
 	item_path = /obj/item/clothing/under/costume/playbunny/custom_playbunny
+#endif
 
 /datum/loadout_item/uniform/miscellaneous/nurse
 	name = "Nurse's Suit"

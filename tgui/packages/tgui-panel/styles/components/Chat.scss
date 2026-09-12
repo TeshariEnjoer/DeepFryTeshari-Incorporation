@@ -83,3 +83,29 @@
   border-left: 2px solid var(--highlight-color);
   padding-left: 0.5em;
 }
+
+// FENYSHA EDIT ADDITION - collapsible chat text, built by collapsed_chat_text(). The summary holds the
+// preview and the rest reveals in place, so a long description never leaves the message it came in.
+.examine_more {
+  display: inline;
+}
+
+.examine_more > summary {
+  display: inline;
+  cursor: pointer;
+  list-style: none;
+}
+
+.examine_more > summary::-webkit-details-marker {
+  display: none;
+}
+
+.examine_more_link {
+  text-decoration: underline;
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.examine_more[open] .examine_more_link {
+  display: none;
+}

@@ -468,6 +468,7 @@
 	for(var/datum/component/reskinable_item/reskin_component as anything in reskin_components)
 		qdel(reskin_component)
 
+#if !defined(NOERP)
 /obj/item/clothing/under/rank/security/head_of_security/bunnysuit
 
 /obj/item/clothing/under/rank/security/head_of_security/bunnysuit/Initialize(mapload)
@@ -475,6 +476,7 @@
 	var/list/reskin_components = GetComponents(/datum/component/reskinable_item)
 	for(var/datum/component/reskinable_item/reskin_component as anything in reskin_components)
 		qdel(reskin_component)
+#endif
 
 /obj/item/clothing/under/rank/security/head_of_security/alt/roselia
 

@@ -57,7 +57,9 @@
 		/obj/item/clothing/head/playbunnyears/miner,
 		/obj/item/clothing/neck/tie/bunnytie/miner,
 		/obj/item/clothing/suit/jacket/tailcoat/miner,
+#if !defined(NOERP)
 		/obj/item/clothing/under/rank/cargo/miner/bunnysuit,
+#endif
 		/obj/item/clothing/shoes/workboots/mining/heeled,
 		/obj/item/clothing/mask/gas/explorer, //No bunny mask, this'll have to do.
 	)

@@ -103,7 +103,11 @@
 	// sanitize_hexcolor() normalises to lowercase, so compare against that rather than what we fed in
 	TEST_ASSERT_EQUAL(features["mcolor"], "#00ff00", "a valid DNA feature color was dropped by import sanitization")
 	TEST_ASSERT(!findtext(features["flavor_text"], "<script>"), "markup in a DNA feature text wasn't stripped")
+#if defined(NOERP)
+	TEST_ASSERT(!("penis_size" in features), "an erotic DNA feature key survived import on a build that applies none of them")
+#else
 	TEST_ASSERT(features["penis_size"] <= 1000, "an out of range numeric DNA feature wasn't clamped")
+#endif
 
 /// Requires a save exported from a server with erotic content to lose all of it on a build that doesn't compile it.
 /datum/unit_test/preferences_import_drops_uncompiled_content
@@ -141,6 +145,16 @@
 	erotic_player_values["slot_metadata"] = list("junk")
 	erotic_player_values["slot_lookup_table"] = list("junk")
 
+	// Every erotic preference this build disables rather than removes, so the loop at the end has something to catch
+	for(var/preference_type in GLOB.preference_entries)
+		var/datum/preference/entry = GLOB.preference_entries[preference_type]
+		if(entry.is_preference_enabled())
+			continue
+		if(entry.savefile_identifier == PREFERENCE_CHARACTER)
+			erotic_character_values[entry.savefile_key] = "Yes"
+		else
+			erotic_player_values[entry.savefile_key] = "Yes"
+
 	var/list/sanitized = preferences.sanitize_imported_savefile(erotic_player_values, current_version)
 	var/list/character = sanitized["character1"]
 	TEST_ASSERT_NOTNULL(character, "the character slot of an erotic content export was dropped entirely")
@@ -161,6 +175,21 @@
 	// Genital sprite accessories aren't compiled either, so the bodypart entry has nothing to resolve against
 	if(isnull(SSaccessories.sprite_accessories["penis"]))
 		TEST_ASSERT_EQUAL(length(character["mutant_bodyparts"]), 0, "a genital mutant bodypart survived import with no accessory to match")
+
+	// MANDATORY_FEATURE_LIST seeds no erotic organ feature on this build, so there is no key for these to match
+#if defined(NOERP)
+	var/list/imported_features = character["features"]
+	TEST_ASSERT(!("penis_size" in imported_features), "an erotic DNA feature key survived import on a build that applies none of them")
+	TEST_ASSERT(!("breasts_size" in imported_features), "an erotic DNA feature key survived import on a build that applies none of them")
+#endif
+
+	// Erotic preferences that still have a datum are disabled rather than removed, and a disabled one is not ours to store
+	for(var/preference_type in GLOB.preference_entries)
+		var/datum/preference/entry = GLOB.preference_entries[preference_type]
+		if(entry.is_preference_enabled())
+			continue
+		var/list/tree = entry.savefile_identifier == PREFERENCE_CHARACTER ? character : sanitized
+		TEST_ASSERT(!(entry.savefile_key in tree), "disabled preference [entry.savefile_key] survived import sanitization")
 
 
 
