@@ -120,8 +120,8 @@
 	desc = "An enormous abandoned mining complex with dozens of kilometers of tunnels and caves. \
 			The station's radio beacon has not given any signals for a very long time. Only the echo of dripping water and the occasional cave-in somewhere in the depths."
 	threat_level = THREAT_LEVEL_RISKY
-	region = TRAINSTATION_REGION_THUNDRA
-	possible_nearstations = list(/datum/train_station/near_station/static_mountaints)
+	region = TRAINSTATION_REGION_TEMPERATE
+	possible_nearstations = list(/datum/train_station/near_station/temperate_forest)
 	station_flags = TRAINSTATION_BLOCKING
 
 

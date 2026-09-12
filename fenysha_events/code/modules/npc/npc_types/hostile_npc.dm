@@ -10,13 +10,21 @@
 		/datum/outfit/trainstation_raider/alt_2,
 	)
 
+	health = 200
+	maxHealth = 200
+	lighting_cutoff_red = 22
+	lighting_cutoff_green = 5
+	lighting_cutoff_blue = 5
+	ai_controller = /datum/ai_controller/basic_controller/npc_bandit
+
 	ranged = TRUE
-	// item_r_hand = /obj/item/gun/ballistic/automatic/as32
+	item_r_hand = /obj/item/gun/ballistic/automatic/m90
 	projectilesound = 'sound/items/weapons/gun/smg/shot_alt.ogg'
 	casingtype = /obj/item/ammo_casing/c35sol
 	ranged_cooldown = 3 SECONDS
 	burst_shots = 3
 
+	ghost_controlable = FALSE
 	speech_phrases = list(
 		NPC_TALK_KEY_IDLE = list(
 			"Чё-то тихо сегодня.",

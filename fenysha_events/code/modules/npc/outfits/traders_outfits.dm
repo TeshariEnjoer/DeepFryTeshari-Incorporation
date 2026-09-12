@@ -14,3 +14,27 @@
 
 	mask = /obj/item/cigarette/cigar
 	gloves = /obj/item/clothing/gloves/combat
+
+/datum/outfit/trader/food
+	name = "NPC trader - food"
+
+	uniform = /obj/item/clothing/under/rank/security/officer/blueshirt/skyrat/bouncer
+	suit = /obj/item/clothing/suit/apron/chef
+	head = /obj/item/clothing/head/costume/irs
+
+/datum/outfit/trader/medical
+	name = "NPC trader - medical"
+
+	uniform = /obj/item/clothing/under/rank/medical/chief_medical_officer/scrubs
+	shoes = /obj/item/clothing/shoes/sneakers/white
+	mask = /obj/item/clothing/mask/breath/medical
+	head = /obj/item/clothing/head/beret/medical
+
+/datum/outfit/trader/medical_teshari
+	name = "NPC trader - medical(teshari)"
+
+	uniform = /obj/item/clothing/under/rank/medical/chief_medical_officer/scrubs
+	shoes = /obj/item/clothing/shoes/sneakers/white
+	mask = /obj/item/clothing/mask/breath/medical
+	head = /obj/item/clothing/head/beret/medical
+	neck = /obj/item/clothing/neck/cloak/cmo

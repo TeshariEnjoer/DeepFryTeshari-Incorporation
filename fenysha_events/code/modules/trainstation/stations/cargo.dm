@@ -2,6 +2,11 @@
 	name = "Station Area - Cargo Terminal"
 	map_path = "_maps/modular_events/trainstation/nearstations/static_cargo_station.dmm"
 
+/datum/train_station/near_station/cargo_station_temperate
+	name = "Station Area - Cargo Terminal"
+	map_path = "_maps/modular_events/trainstation/nearstations/static_cargo_station_temperate.dmm"
+
+
 /datum/train_station/cargo_station
 	name = "Cargo Terminal"
 	map_path = "_maps/modular_events/trainstation/cargo_station.dmm"
@@ -27,6 +32,15 @@
 	desc = "An old but reliable station for loading cargo onto freight trains. \
 			This particular one is located inside a mountain range."
 
+
+/datum/train_station/cargo_station/temperate_1
+	name = "River Cargo Terminal"
+	map_path = "_maps/modular_events/trainstation/cargo_station_river_temperate.dmm"
+	desc = "An old but reliable station for loading cargo onto freight trains. \
+			This particular one is located inside a mountain range."
+
+	region = TRAINSTATION_REGION_TEMPERATE
+	possible_nearstations = list(/datum/train_station/near_station/cargo_station_temperate)
 
 /datum/train_station/cargo_station/after_load()
 	. = ..()

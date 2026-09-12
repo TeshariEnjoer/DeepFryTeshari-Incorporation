@@ -2,6 +2,9 @@
 	name = "Station Area - Abandoned Depot"
 	map_path = "_maps/modular_events/trainstation/nearstations/static_abandoned_train_depo.dmm"
 
+/datum/train_station/near_station/temperate_forest
+	name = "Near station - temperate forest"
+	map_path = "_maps/modular_events/trainstation/nearstations/static_default_temperate.dmm"
 
 /datum/train_station/abandoned_depo
 	name = "Gairen Railway Depot"
@@ -15,18 +18,20 @@
 	possible_next = list(/datum/train_station/gairen)
 
 	region = TRAINSTATION_REGION_THUNDRA
-	station_flags = TRAINSTATION_NO_SELECTION | TRAINSTATION_BLOCKING
+	station_flags = TRAINSTATION_NO_SELECTION | TRAINSTATION_BLOCKING | TRAINSTATION_START_STATION
 
 
 /datum/train_station/milestone_depot
 	name = "Milestones's Railway Depot"
-	desc = ""
+	desc = "A freight rail depot within the city limits of Milestone. \
+		The depot is fully operational—and freight deliveries are continuing. \
+		The city is in good order, even though it is cordoned off by the military."
 	map_path = "_maps/modular_events/trainstation/milestone_depot.dmm"
 	creator = "Fenysha"
-	possible_nearstations = list(/datum/train_station/near_station/abandoned_depo)
+	possible_nearstations = list(/datum/train_station/near_station/temperate_forest)
 
 	region = TRAINSTATION_REGION_TEMPERATE
-	station_flags = TRAINSTATION_NO_SELECTION | TRAINSTATION_BLOCKING
+	station_flags = TRAINSTATION_NO_SELECTION | TRAINSTATION_BLOCKING | TRAINSTATION_START_STATION
 
 
 /datum/train_station/gairen

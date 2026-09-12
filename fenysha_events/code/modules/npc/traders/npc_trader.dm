@@ -143,6 +143,7 @@
 /mob/living/basic/npc/trader
 	name = "Trader"
 	desc = "A person willing to trade."
+	ghost_controlable = FALSE
 
 	/// The player currently trading with this NPC.
 	var/mob/trading_with
@@ -158,6 +159,7 @@
 	var/trader_say_chance = 35
 
 	var/ui_theme = "default"
+	var/trader_tier
 
 /mob/living/basic/npc/trader/Initialize(mapload)
 	trades = list()
@@ -678,8 +680,26 @@
 
 	return data
 
+
+GLOBAL_DATUM_INIT(npc_trader_state, /datum/ui_state/remote, new)
+
+/datum/ui_state/remote
+
+/datum/ui_state/remote/can_use_topic(src_object, mob/user)
+	if(!user)
+		return UI_CLOSE
+
+	if(!user.client)
+		return UI_CLOSE
+
+	if(user.stat)
+		return UI_DISABLED
+
+	return UI_INTERACTIVE
+
+
 /mob/living/basic/npc/trader/ui_state(mob/user)
-	return GLOB.always_state
+	return GLOB.npc_trader_state
 
 /mob/living/basic/npc/trader/ui_act(action, list/params, datum/tgui/ui, datum/ui_state/state)
 	. = ..()
