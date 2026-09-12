@@ -49,6 +49,7 @@
 #include "code\modules\daylight\debug.dm"
 #include "code\modules\dynamic_area\dynamic_area.dm"
 #include "code\modules\elevators\elevator_control.dm"
+#include "code\modules\examine_chat\examine_chat.dm"
 #include "code\modules\preferences_import\_preferences_import.dm"
 #include "code\modules\preferences_import\json_savefile.dm"
 #include "code\modules\preferences_import\import.dm"
@@ -213,6 +214,10 @@
 #include "code\modules\weather\SSweather_sounds.dm"
 #include "code\modules\whitelist\whitelist_db.dm"
 #include "code\modules\whitelist\whitelist_verbs.dm"
+#include "code\modules\wiki_laptop\_wiki_browser.dm"
+#include "code\modules\wiki_laptop\laptop.dm"
+#include "code\modules\wiki_laptop\program.dm"
+#include "code\modules\wiki_laptop\simple.dm"
 /// MOD_INCLUDE_END
 // BEGIN_INTERNALS
 // END_INTERNALS

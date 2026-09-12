@@ -1,4 +1,4 @@
-#define MAX_FLAVOR_LEN MAX_DESC_LEN		// FENYSHA EDIT CHANGE - ORIGINAL: 4096 - tg's description cap
+#define MAX_FLAVOR_LEN 4096		//double the maximum message length.
 #define LOOC_CHANNEL "LOOC" // LOOC
 #define WHIS_CHANNEL "Whis" // Whisper
 

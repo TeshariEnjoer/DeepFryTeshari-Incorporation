@@ -10,8 +10,9 @@
 	var/silicon_full_text = client?.prefs.read_preference(/datum/preference/text/silicon_flavor_text)
 
 #if defined(NOERP)
+	// FENYSHA EDIT ADDITION - no examine panel on these builds, so a long description collapses in chat
 	if(length(silicon_full_text))
-		flavor_text_link = span_notice(translated_chat_text(user?.client, silicon_full_text, client))
+		flavor_text_link = span_notice(collapsed_chat_text(user?.client, silicon_full_text, client))
 #else
 	/// The first 1-FLAVOR_PREVIEW_LIMIT characters in the mob's client's silicon_flavor_text preference datum. FLAVOR_PREVIEW_LIMIT is defined in flavor_defines.dm.
 	var/silicon_preview_text = copytext_char(silicon_full_text, 1, FLAVOR_PREVIEW_LIMIT)
