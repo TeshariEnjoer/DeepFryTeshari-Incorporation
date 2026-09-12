@@ -120,7 +120,7 @@
 	AddElement(/datum/element/ai_pull_awareness)
 	AddElement(/datum/element/ai_social_awareness)
 
-	if(randomize_mutant_colors)
+	if(randomize_mutant_colors || (species != /datum/species/human))
 		randomize_colors()
 	if(make_random_name)
 		name = generate_name()
@@ -260,6 +260,95 @@
 	if(prob(30))
 		desc += pick(" Seems a little lost.", " Looks tired after a long shift.", " Quietly hums something to themselves.", " A faint smell of [pick("coffee","machine oil","fish","wet fur")] lingers around them.")
 
+/mob/living/basic/npc/proc/generate_species_default_features()
+	var/list/features = list()
+	switch(species)
+		if(/datum/species/teshari)
+			features = list(
+					list(
+						ARG_FEATURE = FEATURE_EARS,
+						ARG_FEATURE_NAME = "Teshari Feathers Upright",
+					),
+					list(
+						ARG_FEATURE = FEATURE_TAIL_GENERIC,
+						ARG_FEATURE_NAME = "Teshari (Default)",
+					),
+				)
+			add_hair = FALSE
+		if(/datum/species/vulpkanin)
+			features = list(
+					list(
+						ARG_FEATURE = FEATURE_EARS,
+						ARG_FEATURE_NAME = "Fox",
+					),
+					list(
+						ARG_FEATURE = FEATURE_TAIL_GENERIC,
+						ARG_FEATURE_NAME = "Fox",
+					),
+					list(
+						ARG_FEATURE = FEATURE_SNOUT,
+						ARG_FEATURE_NAME = "Mammal, Long",
+					),
+					list(
+						ARG_FEATURE = FEATURE_LEGS,
+						ARG_FEATURE_NAME = "Normal Legs",
+					),
+				)
+		if(/datum/species/tajaran)
+			features = list(
+					list(
+						ARG_FEATURE = FEATURE_EARS,
+						ARG_FEATURE_NAME = "Cat, normal",
+					),
+					list(
+						ARG_FEATURE = FEATURE_TAIL_GENERIC,
+						ARG_FEATURE_NAME = "Cat (Big)",
+					),
+					list(
+						ARG_FEATURE = FEATURE_SNOUT,
+						ARG_FEATURE_NAME = "Cat, normal",
+					),
+					list(
+						ARG_FEATURE = FEATURE_LEGS,
+						ARG_FEATURE_NAME = "Normal Legs",
+					),
+				)
+		if(/datum/species/lizard, /datum/species/unathi, /datum/species/lizard/ashwalker)
+			features = list(
+					list(
+						ARG_FEATURE = FEATURE_EARS,
+						ARG_FEATURE_NAME = "Cat, normal",
+					),
+					list(
+						ARG_FEATURE = FEATURE_TAIL_GENERIC,
+						ARG_FEATURE_NAME = "Smooth",
+					),
+					list(
+						ARG_FEATURE = FEATURE_SNOUT,
+						ARG_FEATURE_NAME = "Sharp + Light",
+					),
+					list(
+						ARG_FEATURE = FEATURE_LEGS,
+						ARG_FEATURE_NAME = "Normal Legs",
+					),
+					list(
+						ARG_FEATURE = FEATURE_SPINES,
+						ARG_FEATURE_NAME = "None",
+					),
+					list(
+						ARG_FEATURE = FEATURE_FRILLS,
+						ARG_FEATURE_NAME = "None",
+					),
+					list(
+						ARG_FEATURE = FEATURE_HORNS,
+						ARG_FEATURE_NAME = "Curled",
+					),
+					list(
+						ARG_FEATURE = "body_markings",
+						ARG_FEATURE_NAME = "Smooth Belly",
+					),
+				)
+	return features
 
 /mob/living/basic/npc/proc/randomize_colors()
 	var/preset = rand(1, 7)
@@ -306,7 +395,7 @@
 
 
 /mob/living/basic/npc/proc/get_default_features()
-	return list()
+	return null
 
 /mob/living/basic/npc/proc/before_ranged_fire()
 	return
@@ -324,7 +413,10 @@
 	var/skin_tone = pick(GLOB.skin_tones)
 	var/eye_color = random_eye_color()
 	var/hair_color = random_hair_color()
-	var/list/features = list(ARGS_FEATURES = get_default_features(), ARGS_COLORS = get_mutant_colors())
+	var/list/features = list(
+		ARGS_FEATURES = get_default_features() || generate_species_default_features(),
+		ARGS_COLORS = get_mutant_colors(),
+	)
 	var/dynamic_appearance
 
 	var/mob/living/carbon/human/dummy = new()
@@ -430,19 +522,6 @@
 	species = /datum/species/teshari
 	randomize_mutant_colors = TRUE
 	add_hair = FALSE
-
-
-/mob/living/basic/npc/civilian/teshari/get_default_features()
-	return list(
-		list(
-			ARG_FEATURE = FEATURE_EARS,
-			ARG_FEATURE_NAME = "Teshari Feathers Upright",
-		),
-		list(
-			ARG_FEATURE = FEATURE_TAIL_GENERIC,
-			ARG_FEATURE_NAME = "Teshari (Default)",
-		),
-	)
 
 #undef ARGS_FEATURES
 #undef ARGS_COLORS

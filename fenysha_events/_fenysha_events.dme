@@ -133,6 +133,7 @@
 #include "code\modules\map_handler\map_handler.dm"
 #include "code\modules\npc\npc_ai.dm"
 #include "code\modules\npc\_npc.dm"
+#include "code\modules\npc\traders\npc_trader.dm"
 /// #include "code\modules\props\decorative.dm"
 #include "code\modules\props\props_32x64.dm"
 #include "code\modules\props\props_64x64.dm"
