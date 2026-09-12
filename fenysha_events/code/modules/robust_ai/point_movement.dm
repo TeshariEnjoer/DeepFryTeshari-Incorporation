@@ -1,8 +1,9 @@
-/datum/idle_behavior/patrol
+/datum/ai_planning_subtree/patrol
 
 	var/patrol_points_key = BB_BASIC_MOB_PATROL_POINTS
 	var/patrol_index_key = BB_BASIC_MOB_PATROL_INDEX
 
+	/// Distance at which the NPC considers the patrol point reached.
 	var/arrival_distance = 2
 
 	/// Maximum distance from the current patrol point.
@@ -10,40 +11,29 @@
 
 	var/loop_route = TRUE
 
-	/// Chance to make a patrol step per second.
-	var/walk_chance = 50
-
-
-/datum/idle_behavior/patrol/perform_idle_behavior(
-	seconds_per_tick,
-	datum/ai_controller/controller
-)
-	. = ..()
-
+/datum/ai_planning_subtree/patrol/SelectBehaviors(datum/ai_controller/controller, seconds_per_tick)
 	var/mob/living/pawn = controller.pawn
 
 	if(LAZYLEN(pawn.do_afters))
-		return FALSE
+		return
 
 	if(!(pawn.mobility_flags & MOBILITY_MOVE))
-		return FALSE
+		return
 
 	if(!isturf(pawn.loc))
-		return FALSE
+		return
 
 	if(pawn.pulledby)
-		return FALSE
+		return
+
+	if(controller.blackboard[BB_BASIC_MOB_CURRENT_TARGET])
+		return
 
 	var/list/patrol_points = controller.blackboard[patrol_points_key]
-
-	if(!patrol_points || !length(patrol_points))
-		return TRUE
-
-	if(!SPT_PROB(walk_chance, seconds_per_tick))
-		return TRUE
+	if(!LAZYLEN(patrol_points))
+		return
 
 	var/index = controller.blackboard[patrol_index_key]
-
 	if(!index)
 		index = 1
 		controller.set_blackboard_key(
@@ -52,34 +42,29 @@
 		)
 
 	if(index > length(patrol_points))
-
 		if(!loop_route)
-			return TRUE
+			return
 
 		index = 1
-
 		controller.set_blackboard_key(
 			patrol_index_key,
 			index
 		)
 
 	var/turf/current_point = patrol_points[index]
-
 	if(!current_point || QDELETED(current_point))
 		patrol_points[index] = null
-		return TRUE
+		return
 
 	var/distance = get_dist(pawn, current_point)
 
-	// Point reached.
+	// Patrol point reached.
 	if(distance <= arrival_distance)
-
 		index++
 
 		if(index > length(patrol_points))
-
 			if(!loop_route)
-				return TRUE
+				return
 
 			index = 1
 
@@ -87,73 +72,66 @@
 			patrol_index_key,
 			index
 		)
+		return
 
-		return TRUE
+	// If the NPC is too far from the patrol point, first check whether
+	// there is at least one safe step that moves it back toward the route.
+	if(distance > max_patrol_distance)
+		var/list/possible_turfs = list()
 
-	var/list/possible_turfs = list()
+		for(var/direction in GLOB.alldirs)
+			var/turf/destination = get_step(pawn, direction)
 
-	// If we are far away, prefer directions which move us towards the point.
-	for(var/direction in GLOB.alldirs)
-
-		var/turf/destination = get_step(pawn, direction)
-
-		if(!destination?.can_cross_safely(pawn))
-			continue
-
-		var/destination_distance = get_dist(destination, current_point)
-
-		if(distance > max_patrol_distance)
-			if(destination_distance >= distance)
-				continue
-		else
-			if(destination_distance > max_patrol_distance)
+			if(!destination?.can_cross_safely(pawn))
 				continue
 
-		possible_turfs += destination
+			if(get_dist(destination, current_point) >= distance)
+				continue
 
-	if(!length(possible_turfs))
-		return TRUE
+			possible_turfs += destination
 
-	var/turf/destination = pick(possible_turfs)
+		if(!length(possible_turfs))
+			return
 
-	pawn.Move(
-		destination,
-		get_dir(pawn, destination)
+		var/turf/destination = pick(possible_turfs)
+
+		controller.queue_behavior(
+			/datum/ai_behavior/travel_towards_atom,
+			destination
+		)
+		return SUBTREE_RETURN_FINISH_PLANNING
+
+	controller.queue_behavior(
+		/datum/ai_behavior/travel_towards_atom,
+		current_point
 	)
+	return SUBTREE_RETURN_FINISH_PLANNING
 
-	return TRUE
 
 
-/datum/idle_behavior/return_to_spawn
-
+/datum/ai_planning_subtree/return_to_spawn
+	var/current_target_key = BB_BASIC_MOB_CURRENT_TARGET
 	var/spawn_point_key = BB_BASIC_MOB_SPAWN_POINT
-
 	/// Distance at which the NPC starts returning home.
 	var/return_distance = 10
-
 	/// Distance at which the NPC considers itself home.
 	var/arrival_distance = 2
 
 
-/datum/idle_behavior/return_to_spawn/perform_idle_behavior(
-	seconds_per_tick,
-	datum/ai_controller/controller
-)
-	. = ..()
-
+/datum/ai_planning_subtree/return_to_spawn/SelectBehaviors(datum/ai_controller/controller, seconds_per_tick)
 	var/mob/living/pawn = controller.pawn
 
 	if(LAZYLEN(pawn.do_afters))
-		return FALSE
+		return
 
 	if(!(pawn.mobility_flags & MOBILITY_MOVE))
-		return FALSE
+		return
 
 	if(!isturf(pawn.loc))
-		return FALSE
+		return
 
-	if(pawn.pulledby)
-		return FALSE
+	if(controller.blackboard[BB_BASIC_MOB_CURRENT_TARGET])
+		return
 
 	var/turf/spawn_point = controller.blackboard[spawn_point_key]
 
@@ -166,7 +144,7 @@
 			spawn_point
 		)
 
-		return TRUE
+		return
 
 	var/distance = get_dist(
 		pawn,
@@ -174,39 +152,13 @@
 	)
 
 	if(distance <= arrival_distance)
-		return TRUE
+		return
 
 	if(distance < return_distance)
-		return TRUE
+		return
 
-	var/list/possible_turfs = list()
-
-	for(var/direction in GLOB.alldirs)
-
-		var/turf/destination = get_step(
-			pawn,
-			direction
-		)
-
-		if(!destination?.can_cross_safely(pawn))
-			continue
-
-		if(get_dist(destination, spawn_point) >= distance)
-			continue
-
-		possible_turfs += destination
-
-	if(!length(possible_turfs))
-		return TRUE
-
-	var/turf/destination = pick(possible_turfs)
-
-	pawn.Move(
-		destination,
-		get_dir(pawn, destination)
-	)
-
-	return TRUE
+	controller.queue_behavior(/datum/ai_behavior/travel_towards_atom, spawn_point)
+	return SUBTREE_RETURN_FINISH_PLANNING
 
 
 

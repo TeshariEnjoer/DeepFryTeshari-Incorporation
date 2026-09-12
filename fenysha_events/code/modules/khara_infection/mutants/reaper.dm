@@ -93,7 +93,6 @@
 	planning_subtrees = list(
 		/datum/ai_planning_subtree/escape_captivity,
 		/datum/ai_planning_subtree/simple_find_target,
-		/datum/ai_planning_subtree/clear_retaliate,
 		/datum/ai_planning_subtree/target_retaliate/check_faction,
 		/datum/ai_planning_subtree/targeted_mob_ability/check_range/charge,
 		/datum/ai_planning_subtree/targeted_mob_ability/check_range/slash,

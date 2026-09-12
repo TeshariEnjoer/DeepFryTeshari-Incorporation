@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import {
   Box,
   Button,
   Flex,
   Icon,
+  Input,
   LabeledList,
   Section,
   Stack,
@@ -25,14 +27,10 @@ type Trade = {
 type NpcTraderData = {
   npc_name: string;
   money: number;
-
   ui_theme: string;
-
   dialogue: string;
-
   trader_portrait: string;
   user_portrait: string;
-
   sell: Trade[];
   buy: Trade[];
 };
@@ -56,9 +54,7 @@ const Portrait = (props: { portrait: string; player?: boolean }) => {
           height: '100%',
           objectFit: 'cover',
           imageRendering: 'pixelated',
-
           transform: player ? 'scale(1.2)' : 'scale(1.5)',
-
           transformOrigin: player ? 'center center' : 'center 30%',
         }}
       />
@@ -68,7 +64,6 @@ const Portrait = (props: { portrait: string; player?: boolean }) => {
 
 const Dialogue = () => {
   const { data } = useBackend<NpcTraderData>();
-
   const { npc_name, dialogue } = data;
 
   return (
@@ -76,7 +71,6 @@ const Dialogue = () => {
       title={
         <Flex align="center">
           <Icon name="comment" mr={1} />
-
           {npc_name}
         </Flex>
       }
@@ -107,7 +101,6 @@ const TraderPanel = () => {
           <Portrait portrait={trader_portrait} />
         </Section>
       </Stack.Item>
-
       <Stack.Item basis="170px">
         <Dialogue />
       </Stack.Item>
@@ -127,7 +120,6 @@ const PlayerPanel = () => {
           <Portrait portrait={user_portrait} player />
         </Section>
       </Stack.Item>
-
       <Stack.Item basis="170px">
         <Section title="Your Funds" fill>
           <LabeledList>
@@ -136,7 +128,6 @@ const PlayerPanel = () => {
                 <Icon name="money-bill" mr={1} />${money.toLocaleString()}
               </Box>
             </LabeledList.Item>
-
             <LabeledList.Item label="Status">
               <Box color="good">Trading</Box>
             </LabeledList.Item>
@@ -147,20 +138,33 @@ const PlayerPanel = () => {
   );
 };
 
-const TradeList = (props: { trades: Trade[]; action: 'buy' | 'sell' }) => {
-  const { trades, action } = props;
+const TradeList = (props: {
+  trades: Trade[];
+  action: 'buy' | 'sell';
+  search: string;
+}) => {
+  const { trades, action, search } = props;
 
-  if (!trades.length) {
+  const query = search.trim().toLowerCase();
+  const filtered = query
+    ? trades.filter(
+        (t) =>
+          t.name.toLowerCase().includes(query) ||
+          t.description?.toLowerCase().includes(query),
+      )
+    : trades;
+
+  if (!filtered.length) {
     return (
       <Box p={3} color="label" textAlign="center">
-        No offers available.
+        {query ? 'No matching offers.' : 'No offers available.'}
       </Box>
     );
   }
 
   return (
-    <Stack vertical fill>
-      {trades.map((trade) => (
+    <Stack vertical>
+      {filtered.map((trade) => (
         <TradeEntry key={trade.id} trade={trade} action={action} />
       ))}
     </Stack>
@@ -169,9 +173,7 @@ const TradeList = (props: { trades: Trade[]; action: 'buy' | 'sell' }) => {
 
 const TradeEntry = (props: { trade: Trade; action: 'buy' | 'sell' }) => {
   const { trade, action } = props;
-
   const { act } = useBackend<NpcTraderData>();
-
   const soldOut = trade.stock <= 0;
 
   return (
@@ -182,7 +184,6 @@ const TradeEntry = (props: { trade: Trade; action: 'buy' | 'sell' }) => {
             <Stack.Item>
               <Flex align="center">
                 <Icon name={action === 'buy' ? 'shopping-bag' : 'box'} mr={1} />
-
                 <Box bold fontSize="1.1rem">
                   {trade.name}
                 </Box>
@@ -202,7 +203,6 @@ const TradeEntry = (props: { trade: Trade; action: 'buy' | 'sell' }) => {
                 <Box color="good" bold mr={2}>
                   ${trade.price.toLocaleString()}
                 </Box>
-
                 <Tooltip
                   content={
                     trade.stock === Infinity
@@ -252,8 +252,16 @@ const TradingPanel = () => {
     data: { npc_name, money, sell, buy },
   } = useBackend<NpcTraderData>();
 
+  // 0 = Buy (from trader), 1 = Sell (to trader)
+  const [tab, setTab] = useState<'buy' | 'sell'>('buy');
+  const [search, setSearch] = useState('');
+
+  const currentTrades = tab === 'buy' ? sell : buy;
+  const currentAction = tab;
+
   return (
     <Stack vertical fill>
+      {/* Header */}
       <Stack.Item>
         <Section
           title={
@@ -262,33 +270,69 @@ const TradingPanel = () => {
                 <Icon name="exchange-alt" mr={1} />
                 Trading with {npc_name}
               </Box>
-
               <Box color="good" bold>
                 <Icon name="money-bill" mr={1} />${money.toLocaleString()}
               </Box>
             </Flex>
           }
-        >
-          <Box textAlign="center" color="label">
-            Select an offer.
-          </Box>
+        />
+      </Stack.Item>
+
+      {/* Tabs + Search */}
+      <Stack.Item>
+        <Section>
+          <Stack vertical>
+            <Stack.Item>
+              <Tabs fluid>
+                <Tabs.Tab
+                  icon="shopping-cart"
+                  selected={tab === 'buy'}
+                  onClick={() => {
+                    setTab('buy');
+                    setSearch('');
+                  }}
+                >
+                  Buy ({sell.length})
+                </Tabs.Tab>
+                <Tabs.Tab
+                  icon="coins"
+                  selected={tab === 'sell'}
+                  onClick={() => {
+                    setTab('sell');
+                    setSearch('');
+                  }}
+                >
+                  Sell ({buy.length})
+                </Tabs.Tab>
+              </Tabs>
+            </Stack.Item>
+
+            <Stack.Item>
+              <Stack.Item>
+                <Input
+                  fluid
+                  placeholder="Search offers..."
+                  value={search}
+                  onChange={setSearch}
+                />
+              </Stack.Item>
+            </Stack.Item>
+          </Stack>
         </Section>
       </Stack.Item>
 
+      {/* Trade list */}
       <Stack.Item grow>
-        <Section fill p={1}>
-          <Tabs>
-            <Tabs.Tab icon="shopping-cart">
-              <TradeList trades={sell} action="buy" />
-            </Tabs.Tab>
-
-            <Tabs.Tab icon="coins">
-              <TradeList trades={buy} action="sell" />
-            </Tabs.Tab>
-          </Tabs>
+        <Section fill scrollable p={1}>
+          <TradeList
+            trades={currentTrades}
+            action={currentAction}
+            search={search}
+          />
         </Section>
       </Stack.Item>
 
+      {/* Footer note */}
       <Stack.Item>
         <Section>
           <Box textAlign="center" color="label" fontSize="0.85rem">

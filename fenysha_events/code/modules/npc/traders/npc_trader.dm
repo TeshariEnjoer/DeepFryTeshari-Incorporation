@@ -84,13 +84,21 @@
 	direction = TRADER_OFFER_SELL,
 	description = null,
 )
+	var/obj/item/I = new item_type(null)
+
+	var/item_name = I.name
+	var/item_desc = description || I.desc
+
+	qdel(I)
+
 	return new /datum/trader_offer(
 		item_type,
+		item_name,
+		item_desc,
 		price,
 		item_amount,
 		stock,
 		direction,
-		description,
 	)
 
 
@@ -99,6 +107,7 @@
 
 	var/id
 	var/display_name
+	var/description
 
 	var/obj/item/item_type
 	var/item_amount = 1
@@ -107,33 +116,29 @@
 	var/stock = INFINITY
 
 	var/direction = TRADER_OFFER_SELL
-	var/description = ""
 
 
 /datum/trader_offer/New(
 	new_item_type,
+	new_display_name,
+	new_description,
 	new_price,
 	new_item_amount = 1,
 	new_stock = INFINITY,
 	new_direction = TRADER_OFFER_SELL,
-	new_description = null,
 )
 	. = ..()
 
 	id = ++next_id
 
 	item_type = new_item_type
+	display_name = new_display_name
+	description = new_description
+
 	price = new_price
 	item_amount = new_item_amount
 	stock = new_stock
 	direction = new_direction
-	description = new_description || ""
-
-	if(item_type)
-		var/obj/item/I = new item_type(null)
-		display_name = I.name
-		qdel(I)
-
 
 /mob/living/basic/npc/trader
 	name = "Trader"
@@ -254,7 +259,7 @@
 
 
 /mob/living/basic/npc/trader/proc/start_trade(mob/user)
-	if(!can_interact_with_trader(user))
+	if(!can_interact_with_trader(user) || trader_should_interrupt_trade(user))
 		return FALSE
 
 	if(trading_with && trading_with != user)
@@ -300,8 +305,27 @@
  */
 
 /mob/living/basic/npc/trader/proc/trader_should_interrupt_trade(mob/user)
+	if(!ai_controller || ai_controller.ai_status == AI_IDLE)
+		return FALSE
+
+	var/interupt_key = ai_controller.blackboard[BB_NPC_TRADER_INTERUPT_KEY] || BB_BASIC_MOB_CURRENT_TARGET
+	if(ai_controller.blackboard[interupt_key])
+		return TRUE
+
+	var/list/allowed_factions = ai_controller.blackboard[BB_NPC_TRAIDER_TRAID_FACTION]
+	if((allowed_factions && length(allowed_factions)) && !faction_check(allowed_factions, user.get_faction()))
+		return TRUE
+
 	return FALSE
 
+
+/mob/living/basic/npc/trader/proc/away_from_shop()
+	if(!ai_controller || ai_controller.ai_status == AI_IDLE)
+		return FALSE
+	var/turf/shop = ai_controller.blackboard[BB_NPC_TRAIDER_SHOP]
+	if(shop && get_dist(shop, get_turf(src)) > 3)
+		return TRUE
+	return FALSE
 
 /*
  * Every Life() tick we verify the current customer.
@@ -323,6 +347,10 @@
 		return .
 
 	var/mob/user = trading_with
+	if(user && away_from_shop())
+		npc_say("Let me return to my shop first!")
+		end_trade(user)
+		return
 
 	if(QDELETED(user) \
 		|| !can_interact_with_trader(user) \
@@ -388,7 +416,7 @@
 	if(!offer?.item_type)
 		return null
 
-	for(var/obj/item/I in user)
+	for(var/obj/item/I in user.get_all_contents())
 		if(istype(I, offer.item_type))
 			return I
 
@@ -400,8 +428,6 @@
  *
  * This uses the largest available denomination first.
  *
- * With a conventional currency system
- * (1 / 5 / 10 / 25 / 100 etc.) this works normally.
  */
 
 /mob/living/basic/npc/trader/proc/spend_money(mob/user, required)
@@ -415,7 +441,7 @@
 
 	var/list/obj/item/stack/dollar/money = list()
 
-	for(var/obj/item/stack/dollar/D in user)
+	for(var/obj/item/stack/dollar/D in user.get_all_contents())
 		if(D.value <= 0)
 			continue
 
@@ -526,15 +552,23 @@
 
 	if(!I)
 		to_chat(user,span_warning("You do not have [offer.display_name]."))
-
 		return FALSE
 
-	if(!user.dropItemToGround(I))
-		to_chat(user, span_warning( "You cannot hand that item over."))
 
+	var/is_stack = isstack(I)
+	if(is_stack)
+		var/obj/item/stack/S = I
+		if(S.amount < offer.item_amount)
+			to_chat(user, span_warning( "You don't have enough [S] for trade."))
+			return FALSE
+		if(!S.use(offer.item_amount))
+			to_chat(user, span_warning("You cannot hand that item over."))
+			return FALSE
+	else if(!user.dropItemToGround(I))
+		to_chat(user, span_warning("You cannot hand that item over."))
 		return FALSE
-
-	qdel(I)
+	else
+		qdel(I)
 
 	if(offer.stock != INFINITY)
 		offer.stock--
@@ -559,8 +593,7 @@
 
 	var/obj/item/stack/dollar/D = new(get_turf(user))
 
-	D.value = value
-	D.amount = 1
+	D.amount = value
 
 	D.update_appearance()
 
@@ -613,11 +646,11 @@
 	data["dialogue"] = current_dialogue
 
 	data["trader_portrait"] = icon2base64(
-		getFlatIcon(src, SOUTH),
+		getFlatIcon(src, SOUTH, start = FALSE),
 	)
 
 	data["user_portrait"] = icon2base64(
-		getFlatIcon(user, SOUTH),
+		getFlatIcon(user, SOUTH, start = FALSE),
 	)
 
 	var/list/sell = list()
@@ -646,7 +679,7 @@
 	return data
 
 /mob/living/basic/npc/trader/ui_state(mob/user)
-	return GLOB.not_incapacitated_state
+	return GLOB.standing_state
 
 /mob/living/basic/npc/trader/ui_act(action, list/params, datum/tgui/ui, datum/ui_state/state)
 	. = ..()
@@ -703,27 +736,4 @@
 		end_trade(user)
 
 
-/mob/living/basic/npc/trader/test
-	species = /datum/species/teshari
-
-/mob/living/basic/npc/trader/test/InitializeTrade()
-	. = ..()
-	trades += list(
-		NPC_TRADE(
-			/obj/item/stack/telecrystal,
-			1,
-			25,
-			INFINITY,
-			TRADER_OFFER_SELL,
-			"Some of traiders telecrystal.",
-		),
-		NPC_TRADE(
-			/obj/item/stack/telecrystal,
-			1,
-			25,
-			INFINITY,
-			TRADER_OFFER_BUY,
-			"Some of traiders telecrystal.",
-		),
-	)
 

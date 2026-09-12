@@ -44,13 +44,6 @@
 	TRAINSTATION_REGION_INFECTED = /turf/open/indestructible/meat, \
 )
 
-
-// NPC FACTIONS
-
-#define FACTION_CIVILIAN "civilian"
-#define FACTION_POLICE "police"
-#define FACTION_MILITARY "military"
-
 // SPAWNERS AND TRANSITIONS
 
 #define GROUP_WEIGHTED_SPAWNLIST "spawnlist"
