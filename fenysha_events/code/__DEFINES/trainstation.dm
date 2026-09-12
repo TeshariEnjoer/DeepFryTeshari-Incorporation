@@ -39,7 +39,7 @@
 
 #define TRAIN_REGION_BASETURF list( \
 	TRAINSTATION_REGION_THUNDRA = /turf/open/misc/asteroid/snow/indestructible/planet, \
-	TRAINSTATION_REGION_TEMPERATE = /turf/open/floor/grass, \
+	TRAINSTATION_REGION_TEMPERATE = /turf/open/indestructible/grass, \
 	TRAINSTATION_REGION_DESERT = /turf/open/misc/beach/sand, \
 	TRAINSTATION_REGION_INFECTED = /turf/open/indestructible/meat, \
 )

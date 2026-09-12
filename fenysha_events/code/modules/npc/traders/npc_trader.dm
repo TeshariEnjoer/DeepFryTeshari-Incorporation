@@ -679,7 +679,7 @@
 	return data
 
 /mob/living/basic/npc/trader/ui_state(mob/user)
-	return GLOB.standing_state
+	return GLOB.always_state
 
 /mob/living/basic/npc/trader/ui_act(action, list/params, datum/tgui/ui, datum/ui_state/state)
 	. = ..()

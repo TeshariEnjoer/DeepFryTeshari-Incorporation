@@ -399,3 +399,30 @@
 	SET_TURF_DENSITY = TRUE, \
 	SET_TURF_OPACITY = TRUE, \
 )
+
+#define TRANSITION_OPTION_GRASS list( \
+	MOVING_TURF_ICON = 'fenysha_events/icons/turf/moving/nature_turfs.dmi', \
+	MOVING_TURF_ICON_STATE = "grass", \
+	MOVING_TURF_NAME = "Grass", \
+	MOVING_TURF_DESC = "Reall grass, touch it!", \
+	SET_TURF_DENSITY = FALSE, \
+	SET_TURF_OPACITY = FALSE, \
+)
+
+#define TRANSITION_OPTION_GRASS_DENSE list( \
+	MOVING_TURF_ICON = 'fenysha_events/icons/turf/moving/nature_turfs.dmi', \
+	MOVING_TURF_ICON_STATE = "grass", \
+	MOVING_TURF_NAME = "Grass", \
+	MOVING_TURF_DESC = "Reall grass, touch it!", \
+	SET_TURF_DENSITY = TRUE, \
+	SET_TURF_OPACITY = FALSE, \
+)
+
+#define TRANSITION_OPTION_GRASS_BORDER list( \
+	MOVING_TURF_ICON = 'fenysha_events/icons/turf/moving/nature_turfs.dmi', \
+	MOVING_TURF_ICON_STATE = "grass", \
+	MOVING_TURF_NAME = "Grass", \
+	MOVING_TURF_DESC = "Reall grass, touch it!", \
+	SET_TURF_DENSITY = TRUE, \
+	SET_TURF_OPACITY = TRUE, \
+)

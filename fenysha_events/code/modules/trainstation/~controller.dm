@@ -137,7 +137,7 @@ SUBSYSTEM_DEF(train_controller)
 	connect_stations()
 	global_map.generate()
 
-	transition_theme = new /datum/moving_turf_transition/plain_snow() /// TODO: Make it normaly
+	transition_theme = new /datum/moving_turf_transition/plain_grass() /// TODO: Make it normaly
 	transition_theme.process_instant()
 
 	load_map()
@@ -256,7 +256,7 @@ SUBSYSTEM_DEF(train_controller)
 	train_template.load(actual_spawnpoint, centered = FALSE)
 
 /datum/controller/subsystem/train_controller/proc/load_startpoint()
-	load_station(/datum/train_station/abandoned_depo, stop_moving = FALSE, hide_for_players = FALSE, announce = FALSE)
+	load_station(/datum/train_station/milestone_depot, stop_moving = FALSE, hide_for_players = FALSE, announce = FALSE)
 
 /datum/controller/subsystem/train_controller/proc/on_enter_pregame()
 	SIGNAL_HANDLER

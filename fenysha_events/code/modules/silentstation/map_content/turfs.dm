@@ -115,7 +115,8 @@
 	underfloor_accessibility = UNDERFLOOR_INTERACTABLE
 	smoothing_flags = SMOOTH_BITMASK
 	smoothing_groups = SMOOTH_GROUP_FLOOR_ASPHALT
-	canSmoothWith = SMOOTH_GROUP_FLOOR_ASPHALT + SMOOTH_GROUP_OPEN_FLOOR
+	canSmoothWith = SMOOTH_GROUP_FLOOR_ASPHALT
+	planetary_atmos = TRUE
 
 	thermal_conductivity = 0.02
 	heat_capacity = 20000

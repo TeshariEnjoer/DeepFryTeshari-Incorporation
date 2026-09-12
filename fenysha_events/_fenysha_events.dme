@@ -193,6 +193,7 @@
 #include "code\modules\trainstation\map_items\shaded_area.dm"
 #include "code\modules\trainstation\map_items\spawner.dm"
 #include "code\modules\trainstation\map_items\story.dm"
+#include "code\modules\trainstation\map_items\turfs.dm"
 #include "code\modules\trainstation\overrides\telecomms.dm"
 #include "code\modules\trainstation\stations\_station.dm"
 #include "code\modules\trainstation\stations\cargo.dm"

@@ -35,7 +35,7 @@ GLOBAL_LIST_EMPTY(train_object_spawners)
 	return
 
 
-/datum/train_object_spawner_theme/forest
+/datum/train_object_spawner_theme/winter_forest
 	options = list(
 		SPAWNER_GROUP_NEAR_RAILS = list(
 			GROUP_SPAWN_CHANCE = 80,
@@ -69,6 +69,48 @@ GLOBAL_LIST_EMPTY(train_object_spawners)
 			)
 		),
 	)
+
+/datum/train_object_spawner_theme/forest
+	options = list(
+		SPAWNER_GROUP_NEAR_RAILS = list(
+			GROUP_SPAWN_CHANCE = 80,
+			GROUP_SPAWN_RANGE = 1,
+			GROUP_SPAWN_MIN_DELAY = 1 SECONDS,
+			GROUP_SPAWN_MAX_DELAY = 1 SECONDS,
+			GROUP_WEIGHTED_SPAWNLIST = list(
+				/obj/structure/flora/tree/jungle/style_random = 60,
+				/obj/structure/flora/tree/jungle/small/style_random = 30,
+				/obj/structure/flora/tree/dead/style_random = 5,
+				/obj/structure/decoration/bush/jungle/style_random = 10,
+				/obj/structure/decoration/bush/sparsegrass/style_random = 10,
+			)
+		),
+		SPAWNER_GROUP_CENTER = list(
+			GROUP_SPAWN_CHANCE = 50,
+			GROUP_SPAWN_RANGE = 2,
+			GROUP_SPAWN_MIN_DELAY = 1 SECONDS,
+			GROUP_SPAWN_MAX_DELAY = 2 SECONDS,
+			GROUP_WEIGHTED_SPAWNLIST = list(
+				/obj/structure/flora/tree/jungle/style_random = 30,
+				/obj/structure/flora/tree/jungle/small/style_random = 30,
+				/obj/structure/decoration/bush/grassy/style_random = 10,
+				/obj/structure/decoration/bush/jungle/style_random = 10,
+				/obj/structure/decoration/bush/sparsegrass/style_random = 10,
+				/obj/structure/decoration/bush/stalky/style_random = 10,
+				/obj/structure/decoration/bush/lavendergrass/style_random = 10,
+			)
+		),
+		SPAWNER_GROUP_BACKDROP = list(
+			GROUP_SPAWN_CHANCE = 75,
+			GROUP_SPAWN_RANGE = 2,
+			GROUP_SPAWN_MIN_DELAY = 1 SECONDS,
+			GROUP_SPAWN_MAX_DELAY = 3 SECONDS,
+			GROUP_WEIGHTED_SPAWNLIST = list(
+				/obj/structure/decoration/bush/grassy/style_random = 100,
+			)
+		),
+	)
+
 
 
 /datum/train_object_spawner_theme/bridge

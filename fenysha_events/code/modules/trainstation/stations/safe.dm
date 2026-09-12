@@ -18,6 +18,17 @@
 	station_flags = TRAINSTATION_NO_SELECTION | TRAINSTATION_BLOCKING
 
 
+/datum/train_station/milestone_depot
+	name = "Milestones's Railway Depot"
+	desc = ""
+	map_path = "_maps/modular_events/trainstation/milestone_depot.dmm"
+	creator = "Fenysha"
+	possible_nearstations = list(/datum/train_station/near_station/abandoned_depo)
+
+	region = TRAINSTATION_REGION_TEMPERATE
+	station_flags = TRAINSTATION_NO_SELECTION | TRAINSTATION_BLOCKING
+
+
 /datum/train_station/gairen
 	name = "City of Gairen"
 	desc = "An industrial city in the north of the country - once one of the most important transport and production hubs. \
