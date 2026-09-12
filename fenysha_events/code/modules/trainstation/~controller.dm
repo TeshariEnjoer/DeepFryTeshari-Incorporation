@@ -1508,7 +1508,7 @@ ADMIN_VERB(open_train_controller, R_ADMIN, "Open train controller", "Open active
 	if(SStrain_controller.planned_to_load && !(SStrain_controller.planned_to_load.station_flags & TRAINSTATION_ABSCTRACT))
 		var/planed_desc = SStrain_controller.planned_to_load.desc
 		var/planed_name = SStrain_controller.planned_to_load.name
-		station_description.maptext = {"<div style="font-size:40%; text-align:left;">
+		station_description.maptext = {"<div style="text-align:left;">
 											<b>[planed_name]</b>
 											[planed_desc]
 										</div>"}
