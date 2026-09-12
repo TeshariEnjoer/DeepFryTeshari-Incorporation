@@ -175,6 +175,7 @@
 #include "code\modules\silentstation\map_content\decals.dm"
 #include "code\modules\silentstation\map_content\flora.dm"
 #include "code\modules\silentstation\map_content\turfs.dm"
+#include "code\modules\starting_cash\starting_cash.dm"
 #include "code\modules\toys\aesthetic_toys.dm"
 #include "code\modules\trainstation\areas.dm"
 #include "code\modules\trainstation\landmarks.dm"
