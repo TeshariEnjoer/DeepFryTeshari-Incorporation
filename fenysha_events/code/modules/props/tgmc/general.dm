@@ -385,7 +385,61 @@
 	desc = "An open alternative maintenance hatch."
 	icon_state = "maintenancehatch_alt_open"
 
-/obj/structure/prop/general/roadbarrier4
+
+/obj/structure/prop/general/border_collision
+	flags_1 = ON_BORDER_1
+	obj_flags = CAN_BE_HIT | BLOCKS_CONSTRUCTION_DIR | IGNORE_DENSITY
+	density = TRUE
+	anchored = TRUE
+
+/obj/structure/prop/general/border_collision/Initialize(mapload)
+	. = ..()
+
+	var/static/list/loc_connections = list(
+		COMSIG_ATOM_EXIT = PROC_REF(on_exit),
+	)
+	AddElement(/datum/element/connect_loc, loc_connections)
+
+/obj/structure/prop/general/border_collision/CanPass(atom/movable/mover, border_dir)
+	. = ..()
+
+	if(border_dir & dir)
+		return . || mover.throwing || (mover.movement_type & MOVETYPES_NOT_TOUCHING_GROUND)
+
+	return TRUE
+
+/obj/structure/prop/general/border_collision/CanAStarPass(to_dir, datum/can_pass_info/pass_info)
+	if(!(to_dir & dir))
+		return TRUE
+
+	return ..()
+
+/obj/structure/prop/general/border_collision/proc/on_exit(datum/source, atom/movable/leaving, direction)
+	SIGNAL_HANDLER
+
+	if(leaving == src)
+		return
+
+	if(!(direction & dir))
+		return
+
+	if(!density)
+		return
+
+	if(leaving.throwing)
+		return
+
+	if(leaving.movement_type & (PHASING | MOVETYPES_NOT_TOUCHING_GROUND))
+		return
+
+	if(leaving.move_force >= MOVE_FORCE_EXTREMELY_STRONG)
+		return
+
+	leaving.Bump(src)
+	return COMPONENT_ATOM_BLOCK_EXIT
+
+
+/obj/structure/prop/general/border_collision/roadbarrier4
 	name = "Road Barrier 4"
 	desc = "A fourth road barrier design."
 	icon_state = "roadbarrier4"
@@ -394,7 +448,7 @@
 	density = TRUE
 	anchored = TRUE
 
-/obj/structure/prop/general/roadbarrier5
+/obj/structure/prop/general/border_collision/roadbarrier5
 	name = "Road Barrier 5"
 	desc = "A fifth road barrier variant."
 	icon_state = "roadbarrier5"
@@ -403,7 +457,7 @@
 	density = TRUE
 	anchored = TRUE
 
-/obj/structure/prop/general/roadbarrier6
+/obj/structure/prop/general/border_collision/roadbarrier6
 	name = "Road Barrier 6"
 	desc = "A sixth road barrier design."
 	icon_state = "roadbarrier6"
@@ -447,7 +501,7 @@
 	desc = "An active floor spotlight."
 	icon_state = "floorspotlight_on"
 
-/obj/structure/prop/general/centerroadbarrier
+/obj/structure/prop/general/border_collision/centerroadbarrier
 	name = "Center Road Barrier"
 	desc = "A central road barrier."
 	icon_state = "centerroadbarrier"
@@ -456,7 +510,7 @@
 	density = TRUE
 	anchored = TRUE
 
-/obj/structure/prop/general/centerroadbarrier2
+/obj/structure/prop/general/border_collision/centerroadbarrier2
 	name = "Center Road Barrier 2"
 	desc = "A second central road barrier."
 	icon_state = "centerroadbarrier2"
@@ -465,7 +519,7 @@
 	density = TRUE
 	anchored = TRUE
 
-/obj/structure/prop/general/centerroadbarrier3
+/obj/structure/prop/general/border_collision/centerroadbarrier3
 	name = "Center Road Barrier 3"
 	desc = "A third central road barrier."
 	icon_state = "centerroadbarrier3"

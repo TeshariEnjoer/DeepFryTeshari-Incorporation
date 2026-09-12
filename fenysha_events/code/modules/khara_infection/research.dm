@@ -218,7 +218,7 @@
 		return FALSE
 
 	if(!length(target.diseases))
-		experiment_handler.announce_message("Target has no active diseases!")
+		experiment_handler.announce_message("The [required_disease::name] virus was not detected!")
 		return FALSE
 
 	for(var/datum/disease/D as anything in target.diseases)
@@ -233,7 +233,7 @@
 		if(D.stage >= required_stage)
 			return TRUE
 
-		experiment_handler.announce_message("Virus stage is insufficient! Stage [required_stage] is required at minimum.")
+		experiment_handler.announce_message("The [required_disease::name] virus was not detected!")
 		return FALSE
 
 	experiment_handler.announce_message("The [required_disease::name] virus was not detected!")
@@ -245,7 +245,7 @@
 		seen_instances.len, required_atoms[target])
 
 /datum/experiment/scanning/infected_human/late_khara
-	required_stage = 7
+	required_stage = 5
 
 /datum/experiment/scanning/infected_human/true_khara
 	required_disease = /datum/disease/true_khara

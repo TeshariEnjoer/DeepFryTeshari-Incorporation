@@ -11,8 +11,8 @@
 			Once fully developed, the host's body will be overtaken by a new life form that has formed inside it."
 	form = "Bioengineered disease"
 	agent = "Veral khara spores"
-	visibility_flags = HIDDEN_SCANNER|HIDDEN_PANDEMIC
-	spread_flags = DISEASE_SPREAD_SPECIAL|DISEASE_SPREAD_AIRBORNE
+	visibility_flags = HIDDEN_SCANNER|HIDDEN_PANDEMIC|HIDDEN_MEDHUD
+	spread_flags = DISEASE_SPREAD_SPECIAL|DISEASE_SPREAD_AIRBORNE|DISEASE_SPREAD_BLOOD
 	stage_prob = 13
 	max_stages = 7
 	spread_text = "Veral khara spores (contact + miasma in the late stages)"
@@ -26,12 +26,12 @@
 	cures = list()
 
 	var/stage_process = 0
-	var/base_stage_speed = 0.9
+	var/base_stage_speed = 1
 
 	var/list/inverters = list(
-		/datum/reagent/medicine/rezadone = 1,
-		/datum/reagent/medicine/haloperidol = 3,
-		/datum/reagent/toxin/anacea = 6.5,
+		/datum/reagent/medicine/rezadone = 0.5,
+		/datum/reagent/medicine/haloperidol = 0.7,
+		/datum/reagent/toxin/anacea = 2,
 	)
 
 	var/invert_catalyst = /datum/reagent/inverse/technetium
@@ -43,6 +43,8 @@
 	var/emergence_requires_brainless = FALSE
 	var/emergence_generation = 0
 
+	COOLDOWN_DECLARE(visual_effect_cd)
+	COOLDOWN_DECLARE(hallucination_cd)
 	COOLDOWN_DECLARE(stage_process_cd)
 	COOLDOWN_DECLARE(miasma_spread_cd)
 	COOLDOWN_DECLARE(symptom_cd)
@@ -92,27 +94,37 @@
 			visibility_flags = HIDDEN_SCANNER|HIDDEN_PANDEMIC
 			process_dead = TRUE
 			spreading_modifier = KHARA_SPREADING_MODIFIER
+			base_stage_speed =  initial(base_stage_speed) * 0.8
+			visibility_flags = HIDDEN_SCANNER|HIDDEN_PANDEMIC|HIDDEN_MEDHUD
 
 		if(4)
 			to_chat(affected_mob, span_userdanger("Something heavy and wrong pulses deep inside your belly..."))
 			process_dead = TRUE
 			spreading_modifier = KHARA_SPREADING_MODIFIER * 0.8
+			base_stage_speed =  initial(base_stage_speed) * 1.35
+			visibility_flags = NONE
 
 		if(5)
 			to_chat(affected_mob, span_userdanger("Your skin swells and writhes - something is growing far too fast!"))
 			process_dead = TRUE
 			spreading_modifier = KHARA_SPREADING_MODIFIER
+			base_stage_speed =  initial(base_stage_speed) * 1.5
+			visibility_flags = NONE
 
 		if(6)
 			to_chat(affected_mob, span_userdanger("Your bones crack and shift under strange internal pressure."))
 			process_dead = TRUE
 			spreading_modifier = KHARA_SPREADING_MODIFIER * 1.2
+			base_stage_speed =  initial(base_stage_speed) * 2
+			visibility_flags = NONE
 
 		if(7)
 			to_chat(affected_mob, span_userdanger("Everything inside you is moving. It wants out."))
 			affected_mob.Shake(duration = 2 SECONDS)
 			process_dead = TRUE
 			spreading_modifier = KHARA_SPREADING_MODIFIER * 1.4
+			base_stage_speed =  initial(base_stage_speed) * 2.6
+			visibility_flags = NONE
 
 	affected_mob.update_health_hud()
 
@@ -208,6 +220,10 @@
 				to_chat(affected_mob, span_warning("Your joints [pick("ache", "creak", "feel wrong")]..."))
 				affected_mob.adjust_stamina_loss(6)
 
+			if(SPT_PROB(1.5, seconds_per_tick) && COOLDOWN_FINISHED(src, hallucination_cd))
+				do_hallucination()
+				COOLDOWN_START(src, hallucination_cd, rand(35, 55) SECONDS)
+
 		if(4)
 			if(SPT_PROB(3, seconds_per_tick))
 				to_chat(affected_mob, span_danger("You feel something hard and wrong growing inside your [pick("chest", "belly", "side")]."))
@@ -226,6 +242,10 @@
 				to_chat(affected_mob, span_userdanger("You feel something inside your [pick("chest", "right arm", "left arm")] pulse painfully."))
 				COOLDOWN_START(src, symptom_cd, rand(25, 45) SECONDS)
 
+			if(SPT_PROB(3, seconds_per_tick) && COOLDOWN_FINISHED(src, hallucination_cd))
+				do_hallucination()
+				COOLDOWN_START(src, hallucination_cd, rand(20, 35) SECONDS)
+
 		if(5)
 			if(SPT_PROB(5, seconds_per_tick))
 				to_chat(affected_mob, span_userdanger("Your flesh swells monstrously - something is alive inside!"))
@@ -240,11 +260,21 @@
 				affected_mob.AdjustKnockdown(rand(15, 30))
 				affected_mob.adjust_stamina_loss(10)
 
+			if(SPT_PROB(4, seconds_per_tick) && COOLDOWN_FINISHED(src, hallucination_cd))
+				do_hallucination()
+				COOLDOWN_START(src, hallucination_cd, rand(15, 30) SECONDS)
+
+			if(SPT_PROB(2, seconds_per_tick))
+				affected_mob.Shake(10)
+
+			if(SPT_PROB(1.5, seconds_per_tick))
+				to_chat(affected_mob, span_userdanger("For a moment, the room looks completely unfamiliar."))
+
 			if(SPT_PROB(5, seconds_per_tick) && COOLDOWN_FINISHED(src, miasma_spread_cd))
 				if(protected_area)
 					to_chat(affected_mob, span_userdanger("You feel a thick miasma rising in your throat, but something keeps it from escaping!"))
 				else
-					spread_khara_miasma()
+					airborne_spread(2)
 				COOLDOWN_START(src, miasma_spread_cd, rand(90, 180) SECONDS)
 
 		if(6)
@@ -259,11 +289,22 @@
 			if(SPT_PROB(2, seconds_per_tick))
 				affected_mob.vomit(VOMIT_CATEGORY_BLOOD|VOMIT_CATEGORY_KNOCKDOWN, lost_nutrition = FALSE)
 
+			if(SPT_PROB(4, seconds_per_tick) && COOLDOWN_FINISHED(src, hallucination_cd))
+				apply_khara_hallucination(rand(8, 15) SECONDS)
+				do_hallucination()
+				COOLDOWN_START(src, hallucination_cd, rand(10, 20) SECONDS)
+
+			if(SPT_PROB(2, seconds_per_tick))
+				affected_mob.Shake(duration = 2 SECONDS)
+
+			if(SPT_PROB(1.5, seconds_per_tick))
+				to_chat(affected_mob, span_userdanger("Something moves at the edge of your vision."))
+
 			if(SPT_PROB(2.5, seconds_per_tick) && COOLDOWN_FINISHED(src, miasma_spread_cd))
 				if(protected_area)
 					to_chat(affected_mob, span_userdanger("You feel a thick miasma rising in your throat, but something keeps it from escaping!"))
 				else
-					spread_khara_miasma()
+					airborne_spread(2)
 				COOLDOWN_START(src, miasma_spread_cd, rand(90, 180) SECONDS)
 
 		if(7)
@@ -276,11 +317,22 @@
 			if(SPT_PROB(3, seconds_per_tick))
 				affected_mob.Shake(duration = 2 SECONDS)
 
+			if(SPT_PROB(5, seconds_per_tick) && COOLDOWN_FINISHED(src, hallucination_cd))
+				apply_khara_hallucination(rand(10, 20) SECONDS)
+				do_hallucination()
+				COOLDOWN_START(src, hallucination_cd, rand(8, 15) SECONDS)
+
+			if(SPT_PROB(2, seconds_per_tick))
+				to_chat(affected_mob, span_bolddanger("You see something standing behind [pick("yourself", "the person beside you", "you")]..."))
+
+			if(SPT_PROB(1.5, seconds_per_tick))
+				affected_mob.adjust_confusion(10)
+
 			if(SPT_PROB(3, seconds_per_tick) && COOLDOWN_FINISHED(src, miasma_spread_cd))
 				if(protected_area)
 					to_chat(affected_mob, span_userdanger("You feel a thick miasma building in your lungs, but the surrounding environment suppresses it."))
 				else
-					spread_khara_miasma()
+					airborne_spread(2)
 				COOLDOWN_START(src, miasma_spread_cd, rand(90, 180) SECONDS)
 
 /datum/disease/khara/proc/schedule_delayed_emergence(brainless = FALSE)
@@ -354,19 +406,40 @@
 
 	var/mob/dead/observer/chosen = SSpolling.poll_ghost_candidates(poll_time = 10 SECONDS, role_name_text = "Reborn [affected_mob]", alert_pic = thing_emerg, amount_to_pick = 1)
 
+	if(affected_mob.stat != DEAD)
+		emerging = FALSE
+		visibility_flags = HIDDEN_SCANNER|HIDDEN_PANDEMIC
+		return
+
 	if(chosen)
 		chosen.ManualFollow(affected_mob)
 
 	for(var/i = 1 to rand(3, 6))
+		if(affected_mob.stat != DEAD)
+			emerging = FALSE
+			visibility_flags = HIDDEN_SCANNER|HIDDEN_PANDEMIC
+			return
+
 		affected_mob.spray_blood(rand(GLOB.cardinals), rand(2, 3))
 		affected_mob.Shake()
 		sleep(1.5 SECONDS)
+
+	if(affected_mob.stat != DEAD)
+		emerging = FALSE
+		visibility_flags = HIDDEN_SCANNER|HIDDEN_PANDEMIC
+		return
 
 	affected_mob.visible_message(span_userdanger("[affected_mob]'s chest bursts open and a hideous creature tears itself free!"), span_userdanger("Your body is torn apart as something escapes from within."))
 
 	sleep(0.2 SECONDS)
 
+	if(affected_mob.stat != DEAD)
+		emerging = FALSE
+		visibility_flags = HIDDEN_SCANNER|HIDDEN_PANDEMIC
+		return
+
 	emerged = TRUE
+	emerging = FALSE
 
 	if(thing_emerg)
 		var/mob/living/creature = new thing_emerg(get_turf(affected_mob))
@@ -401,6 +474,88 @@
 
 	return TRUE
 
+/datum/disease/khara/airborne_spread(spread_range = 2)
+	if(isnull(affected_mob))
+		return FALSE
+
+	if(!(spread_flags & DISEASE_SPREAD_AIRBORNE))
+		return FALSE
+
+	if(!affected_mob.can_spread_airborne_diseases())
+		return FALSE
+
+	if(!has_required_infectious_organ(affected_mob, ORGAN_SLOT_LUNGS))
+		return FALSE
+
+	if(HAS_TRAIT(affected_mob, TRAIT_VIRUS_RESISTANCE))
+		return FALSE
+
+	var/mob/living/carbon/human/source = affected_mob
+	var/obj/item/clothing/mask/source_mask = source.wear_mask
+
+	if(source_mask && source_mask.flags_cover & MASKCOVERSMOUTH)
+		return FALSE
+
+	var/turf/mob_loc = affected_mob.loc
+	if(!istype(mob_loc))
+		return FALSE
+
+	for(var/mob/living/carbon/human/to_infect in oview(spread_range, affected_mob))
+		if(!prob(infectivity))
+			continue
+
+		var/turf/infect_loc = to_infect.loc
+		if(!istype(infect_loc))
+			continue
+
+		var/obj/item/clothing/mask/target_mask = to_infect.wear_mask
+
+		if(target_mask && target_mask.flags_cover & MASKCOVERSMOUTH)
+			continue
+
+		if(to_infect.internal && to_infect.internal.breathing_mob == to_infect)
+			continue
+
+		if(!disease_air_spread_walk(mob_loc, infect_loc))
+			continue
+
+		to_infect.contract_airborne_disease(src)
+
+	return TRUE
+
+/datum/disease/khara/proc/do_hallucination(tier = HALLUCINATION_TIER_COMMON, strict = FALSE)
+	if(QDELETED(affected_mob))
+		return
+
+	if(!affected_mob.client)
+		return
+
+	if(affected_mob.mob_biotypes & NO_HALLUCINATION_BIOTYPES)
+		return
+
+	if(affected_mob.is_blind())
+		return
+
+	var/hallucination_type = get_random_hallucination(tier, strict)
+	if(!hallucination_type)
+		return
+
+	affected_mob.cause_hallucination(hallucination_type, src)
+
+/datum/disease/khara/proc/apply_khara_hallucination(duration = 10 SECONDS)
+	if(QDELETED(affected_mob))
+		return
+
+	if(!affected_mob.client)
+		return
+
+	if(affected_mob.mob_biotypes & NO_HALLUCINATION_BIOTYPES)
+		return
+
+	if(affected_mob.is_blind())
+		return
+
+	affected_mob.adjust_hallucinations_up_to(duration, 30 SECONDS)
 
 /datum/component/khara_disease
 	VAR_PRIVATE/mob/living/carbon/current_mob = null
@@ -564,7 +719,7 @@
 			increasing strength, speed and endurance, fully curing other diseases and making the body more perfect."
 	form = "Bioengineered symbiotic infection"
 	agent = "Symbiotic Veral khara spores"
-	visibility_flags = HIDDEN_SCANNER
+	visibility_flags = HIDDEN_SCANNER|HIDDEN_PANDEMIC|HIDDEN_MEDHUD
 	spread_flags = DISEASE_SPREAD_SPECIAL
 	cure_chance = 0
 	stage_prob = 100
