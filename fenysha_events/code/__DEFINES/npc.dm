@@ -25,6 +25,6 @@
 #define FACTION_POLICE "police"
 #define FACTION_MILITARY "military"
 #define FACTION_TRADER "trader"
-#define FACTION_RAIDER "bandit_iz_stalkera"
+#define FACTION_BANDIT "bandit_iz_stalkera"
 #define FACTION_KHARA_PRIEST "khara_priest"
 #define FACTION_SCIENTIST "scientist"

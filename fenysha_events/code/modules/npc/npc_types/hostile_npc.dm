@@ -1,5 +1,5 @@
 /mob/living/basic/npc/raider
-	faction = list(FACTION_HOSTILE, FACTION_RAIDER)
+	faction = list(FACTION_HOSTILE, FACTION_BANDIT)
 	make_random_name = TRUE
 	join_text = "You are a raider. Defend the zone you are in and attack outsiders. Try to keep them alive while doing so."
 	important_text = "Do not attack the train, and do not pursue players! Do not remove players from the round entirely!"

@@ -134,6 +134,7 @@
 /// #include "code\modules\machinery\multicell_charged.dm"
 #include "code\modules\map_handler\_handler_processing.dm"
 #include "code\modules\map_handler\map_handler.dm"
+#include "code\modules\mapping_helpers\fake_z.dm"
 #include "code\modules\npc\npc_ai.dm"
 #include "code\modules\npc\_npc.dm"
 #include "code\modules\npc\npc_apparance.dm"

@@ -90,7 +90,7 @@
 
 	blackboard = list(
 		BB_FLEE_TARGETING_STRATEGY = /datum/targeting_strategy/basic,
-		BB_NPC_TALK_COOLDOWN = 5 SECONDS,
+		BB_NPC_TALK_COOLDOWN = 30 SECONDS,
 	)
 
 	ai_movement = /datum/ai_movement/jps/npc
